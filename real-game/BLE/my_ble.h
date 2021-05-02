@@ -1,18 +1,5 @@
-/* mbed Microcontroller Library
- * Copyright (c) 2017-2019 ARM Limited
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+#ifndef __MY_BLE_H
+#define __MY_BLE_H
 
 #include "GattCharacteristic.h"
 #include "GattService.h"
@@ -23,29 +10,18 @@
 #include "ble/BLE.h"
 #include "gatt_server_process.h"
 #include "pretty_printer.h"
+#include "mbed.h"
 #include <cstdint>
 #include <cstdio>
-#include <mbed.h>
 #include <functional>
+
 
 using mbed::callback;
 using namespace std::literals::chrono_literals;
 
-
-/**
- * A Clock service that demonstrate the GattServer features.
- *
- * The clock service host three characteristics that model the current hour,
- * minute and second of the clock. The value of the second characteristic is
- * incremented automatically by the system.
- *
- * A client can subscribe to updates of the clock characteristics and get
- * notified when one of the value is changed. Clients can also change value of
- * the second, minute and hour characteristric.
- */
-class ButtonService : public ble::GattServer::EventHandler {
+class LocationService : public ble::GattServer::EventHandler {
 public:
-    ButtonService() :
+    LocationService() :
         _stu_id_char("12345678-bc75-4741-8a26-264af75807de", *STU_ID),
         _stu_id_service(
             /* uuid */ "A000",
@@ -85,35 +61,10 @@ public:
         _general_characteristics[1] = &_button_state;
         _general_characteristics[2] = &_led_state;
         /* setup authorization handlers */
-        _led_state.setWriteAuthorizationCallback(this, &ButtonService::led_client_write);
+        _led_state.setWriteAuthorizationCallback(this, &LocationService::led_client_write);
     }
 
-    void start(BLE &ble, events::EventQueue &event_queue)
-    {
-        _server = &ble.gattServer();
-        _event_queue = &event_queue;
-        ble_error_t err;
-
-        printf("Registering demo service\r\n");
-        // err = _server->addService(_button_service);
-        // err = _server->addService(_led_service);
-        // err = _server->addService(_stu_id_service);
-        err = _server->addService(_general_service);
-
-        if (err) {
-            printf("Error %u during demo service registration.\r\n", err);
-            return;
-        }
-
-        /* register handlers */
-        _server->setEventHandler(this);
-
-        printf("button service registered\r\n");
-        _event_queue->call_every(1000ms, callback(this, &ButtonService::send_std_id));
-        // _event_queue->call_every(500ms, this, &ButtonService::blink);
-        _button.fall(Callback<void()>(this, &ButtonService::button_pressed));
-        _button.rise(Callback<void()>(this, &ButtonService::button_released));
-    }
+    void start(BLE &ble, events::EventQueue &event_queue);
 
     void updateButtonState(bool newState) {
         ble_error_t err = _button_state.set(*_server, newState);
@@ -125,12 +76,12 @@ public:
 
     void button_pressed(void) {
         // updateButtonState(true);
-        _event_queue->call(this, &ButtonService::updateButtonState, true);
+        _event_queue->call(this, &LocationService::updateButtonState, true);
     }
 
     void button_released(void) {
         // updateButtonState(false);
-        _event_queue->call(this, &ButtonService::updateButtonState, false);
+        _event_queue->call(this, &LocationService::updateButtonState, false);
     }
 
     void blink(void) {
@@ -212,38 +163,8 @@ private:
 
 private:
 
-    void send_std_id(void) {
-        const static uint8_t stu_id[10] = "B07901184";
-        ble_error_t err = _stu_id_char.set(*_server, stu_id);
-        if (err) {
-            printf("write of the second value returned error %u\r\n", err);
-            return;
-        }
-    }
-
-    void led_client_write(GattWriteAuthCallbackParams *e)
-    {
-        printf("characteristic %u write authorization\r\n", e->handle);
-
-        if (e->offset != 0) {
-            printf("Error invalid offset\r\n");
-            e->authorizationReply = AUTH_CALLBACK_REPLY_ATTERR_INVALID_OFFSET;
-            return;
-        }
-
-        if (e->len != 1) {
-            printf("Error invalid len\r\n");
-            e->authorizationReply = AUTH_CALLBACK_REPLY_ATTERR_INVALID_ATT_VAL_LENGTH;
-            return;
-        }
-
-        if (e->data[0] != 0) {
-            led_turn_on();
-        }
-        else led_turn_off();
-
-        e->authorizationReply = AUTH_CALLBACK_REPLY_SUCCESS;
-    }
+    void send_std_id(void);
+    void led_client_write(GattWriteAuthCallbackParams *e);
     
 
 
@@ -405,25 +326,6 @@ private:
     // try to combine three charateristic into one service
     GattService _general_service;
     GattCharacteristic* _general_characteristics[3];
-
-    
-
 };
 
-int main() {
-    BLE &ble = BLE::Instance();
-    events::EventQueue event_queue;
-    ButtonService demo_service;
-
-    /* this process will handle basic ble setup and advertising for us */
-    GattServerProcess ble_process(event_queue, ble);
-
-    /* once it's done it will let us continue with our demo */
-    ble_process.on_init(callback(&demo_service, &ButtonService::start));
-
-    ble_process.start();
-
-    
-
-    return 0;
-}
+#endif

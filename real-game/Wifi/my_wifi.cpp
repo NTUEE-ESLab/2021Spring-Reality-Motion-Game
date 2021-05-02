@@ -16,8 +16,8 @@
 
 #include "mbed.h"
 // wifi module header
-#include "./wifi.h"
-#include "../Sensor/sensor.h"
+#include "./my_wifi.h"
+#include "../Sensor/my_sensor.h"
 
 ISM43362Interface wifi(false);
 
@@ -88,6 +88,27 @@ int scan_devices(WiFiInterface *wifi, int limit_count = 15)
     return count;
 }
 
+/*
+ * Example:
+   // wifi variables
+   int count = 0;
+
+   // printf("\nConnecting to %s...\n", MBED_CONF_APP_WIFI_SSID);
+   int ret = wifi.connect(MBED_CONF_APP_WIFI_SSID, MBED_CONF_APP_WIFI_PASSWORD, NSAPI_SECURITY_WPA_WPA2); 
+    
+   if (ret != 0) {
+       printf("\nConnection error\n");
+       return -1; 
+   }
+
+   printf("Success\n\n");
+   print_wifi_info(wifi);
+
+   send_sensor_data(&wifi);
+   printf("sensor data complete");
+   wifi.disconnect();
+   printf("\nDone\n"); 
+ */
 void send_sensor_data(NetworkInterface *net)
 {
     TCPSocket socket;
