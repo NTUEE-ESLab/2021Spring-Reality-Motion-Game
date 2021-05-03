@@ -41,6 +41,7 @@ mbed_config.h
 *.pyc
 BUILD/
 cmake_build/
+*/__pycache__
 
 
 */BUILD
