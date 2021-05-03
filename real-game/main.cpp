@@ -23,34 +23,42 @@ DigitalOut led(LED1);
 int main() 
 {
     // wifi variables
-    // int count = 0;
+    int count = 0;
 
-    // // printf("\nConnecting to %s...\n", MBED_CONF_APP_WIFI_SSID);
-    // int ret = wifi.connect(MBED_CONF_APP_WIFI_SSID, MBED_CONF_APP_WIFI_PASSWORD, NSAPI_SECURITY_WPA_WPA2); 
+    // printf("\nConnecting to %s...\n", MBED_CONF_APP_WIFI_SSID);
+    int ret = wifi.connect(MBED_CONF_APP_WIFI_SSID, MBED_CONF_APP_WIFI_PASSWORD, NSAPI_SECURITY_WPA_WPA2); 
     
-    // if (ret != 0) {
-    //     printf("\nConnection error\n");
-    //     return -1; 
-    // }
+    if (ret != 0) {
+        printf("\nConnection error\n");
+        return -1; 
+    }
 
-    // printf("Success\n\n");
-    // print_wifi_info(wifi);
+    printf("Success\n\n");
+    printf("MAC: %s\n", wifi.get_mac_address()); 
+    printf("IP: %s\n", wifi.get_ip_address()); 
+    printf("Netmask: %s\n", wifi.get_netmask()); 
+    printf("Gateway: %s\n", wifi.get_gateway()); 
+    printf("RSSI: %d\n\n", wifi.get_rssi());
+    
 
-    // send_sensor_data(&wifi);
-    // printf("sensor data complete");
-    // wifi.disconnect();
-    // printf("\nDone\n"); 
-    BLE &ble = BLE::Instance();
-    events::EventQueue event_queue;
-    LocationService demo_service;
+    // http_demo(&wifi);
+    send_sensor_data(&wifi);
+    printf("sensor data complete");
+    wifi.disconnect();
+    printf("\nDone\n"); 
 
-    /* this process will handle basic ble setup and advertising for us */
-    GattServerProcess ble_process(event_queue, ble);
 
-    /* once it's done it will let us continue with our demo */
-    ble_process.on_init(callback(&demo_service, &LocationService::start));
+    // BLE &ble = BLE::Instance();
+    // events::EventQueue event_queue;
+    // LocationService demo_service;
 
-    ble_process.start();
+    // /* this process will handle basic ble setup and advertising for us */
+    // GattServerProcess ble_process(event_queue, ble);
+
+    // /* once it's done it will let us continue with our demo */
+    // ble_process.on_init(callback(&demo_service, &LocationService::start));
+
+    // ble_process.start();
 
     return 0;
 }

@@ -116,6 +116,8 @@ void send_sensor_data(NetworkInterface *net)
 
     printf("Sending data to host computer...\n");
 
+    // Open a socket on the network interface, and create a TCP connection to www.arm.com
+
     // Show the network address
     SocketAddress a;
     const char * IP_ADDRESS = "192.168.50.252";
