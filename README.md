@@ -13,3 +13,7 @@
 - Collect some data about several motion patterns
 - Draw figures based on above data
 - Add wifi-server.py and BLE programs to this repo
+
+### 5/6 Emily
+- Add sensor sliding window method
+- Add calibration method
