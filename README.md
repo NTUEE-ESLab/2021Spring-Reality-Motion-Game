@@ -17,3 +17,5 @@
 ### 5/6 Emily
 - Add sensor sliding window method
 - Add calibration method
+
+- Midterm Proposal: https://docs.google.com/presentation/d/1zUISQAgCSKkXEW6G_4c_JL1AxVgvxVhpq2gYIAT18C8/edit?usp=sharing
