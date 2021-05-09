@@ -131,7 +131,7 @@ def main():
         except KeyboardInterrupt:
             print('Interrupted')
             plt.savefig(f'image/image-{t}.png')
-            file.close()
+            s.close()
             print(f"error_count = {error_count}")
 
 

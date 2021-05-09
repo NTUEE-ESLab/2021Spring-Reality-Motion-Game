@@ -19,6 +19,8 @@
 
 #define SENSOR_BUFFER_SIZE 50
 #define SCALE_MULTIPLIER 0.045
+#define SENSOR_TIMESTEP 1
+#define STD_TIMESTEP 50
 #define TIMESTEP 50
 
 extern EventQueue event_queue;
@@ -39,17 +41,30 @@ public:
     // Print standard value
     char* printStd();
 
+    char* getSensorValueWifi();
+
+    char* getStdWifi();
+
+    double* getSensorValueBLE();
+
+    double* getStdBLE();
+
     // Update sensor data buffer
     void update();
+
+
+    double bleArr[7];
+
 
 private:
     EventQueue &_event_queue;
 
     // Calibration arrays
     int AccOffset[3];          
-    float GyroOffset[3];    
+    double GyroOffset[3];    
 
     // Data arrays
+    // int16_t pDataXYZ[3];
     int16_t pDataXYZ[3];
     float pGyroDataXYZ[3];
     float pGyroDataXYZ_prev[3];
@@ -61,6 +76,12 @@ private:
     int buffer_stm_z[SENSOR_BUFFER_SIZE];
     int buffer_stm[SENSOR_BUFFER_SIZE];
 
+    // Std values
+    double stm_x;
+    double stm_y;
+    double stm_z;
+    double stm_val;
+
     // Buffer pointer
     int _buffer_p;
 
@@ -68,7 +89,8 @@ private:
     int _sample_num;
 
     // Print Buffer
-    char* ret;
+    char* ret_sen;
+    char* ret_std;
 
     // Button Event
     DigitalOut led;
@@ -102,6 +124,10 @@ private:
 
     float getStd(int* buffer);
 
+    void updateStmStd();
+
+    void fillBLEArr();
+
     // Get Acce and Gyro data
     void sampling();
 
@@ -117,7 +143,9 @@ private:
     // Calculate the angle based on gyro data
     void calculateAngle();
 
-    void update_handler();
+    void sensorUpdateHandler();
+
+    void stdUpdateHandler();
 
     void button_release_detecting();
 

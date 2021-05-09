@@ -15,7 +15,8 @@ DataSensor::DataSensor(EventQueue &event_queue) :
     BSP_GYRO_Init();
     BSP_ACCELERO_Init();
 
-    ret = new char[1024];
+    ret_sen = new char[1024];
+    ret_std = new char[1024];
 }
 
 void DataSensor::start() {
@@ -23,7 +24,13 @@ void DataSensor::start() {
     button.rise(callback(this, &DataSensor::button_released));
     // The 'fall' handler will execute in the context of thread 't' 
     button.fall(callback(this, &DataSensor::button_pressed));
-    _event_queue.call_every(10, this, &DataSensor::update_handler);
+
+    // first time calibration
+    calibration();
+
+    // add update event to event queue
+    _event_queue.call_every(SENSOR_TIMESTEP, this, &DataSensor::sensorUpdateHandler);
+    _event_queue.call_every(STD_TIMESTEP, this, &DataSensor::stdUpdateHandler);
 }
 
 
@@ -39,24 +46,49 @@ void DataSensor::calibration() {
 
     normalizeSamples();
 
-
     printf("done!\n");
 }
 
 char* DataSensor::printSensorValue() {
-    int n = sprintf(ret, "sensor{\"ax\":%d,\"ay\":%d,\"az\":%d,\"gx\":%.2f,\"gy\":%.2f,\"gz\":%.2f}", pDataXYZ[0], pDataXYZ[1], pDataXYZ[2], pGyroDataXYZ[0]/1000, pGyroDataXYZ[1]/1000, pGyroDataXYZ[2]/1000);
-    printf("ACC %d, %d, %d  Gyro %.2f %.2f %.2f\n", pDataXYZ[0], pDataXYZ[1], pDataXYZ[2], pGyroDataXYZ[0]/1000, pGyroDataXYZ[1]/1000, pGyroDataXYZ[2]/1000);
-    return ret;
+    int n = sprintf(ret_sen, "sen{\"ax\":%d,\"ay\":%d,\"az\":%d,\"gx\":%.2f,\"gy\":%.2f,\"gz\":%.2f}", pDataXYZ[0], pDataXYZ[1], pDataXYZ[2], pGyroDataXYZ[0]/1000, pGyroDataXYZ[1]/1000, pGyroDataXYZ[2]/1000);
+    return ret_sen;
 }
 
 char* DataSensor::printStd() {
-    float stm_x = getStd(buffer_stm_x);
-    float stm_y = getStd(buffer_stm_y);
-    float stm_z = getStd(buffer_stm_z);
-    float stm_val = getStd(buffer_stm);
+    int n = sprintf(ret_std, "std{\"ax\":%.2f,\"ay\":%.2f,\"az\":%.2f,\"all\":%.2f,\"ang0\":%.0f,\"ang1\":%.0f,\"ang2\":%.0f}", stm_x, stm_y, stm_z, stm_val, angle[0], angle[1], angle[2]);
+    return ret_std;
+}
 
-    int n = sprintf(ret, "{\"ax\":%.2f,\"ay\":%.2f,\"az\":%.2f,\"all\":%.2f,\"ang0\":%.0f,\"ang1\":%.0f,\"ang2\":%.0f}", stm_x, stm_y, stm_z, stm_val, angle[0], angle[1], angle[2]);
-    return ret;
+char* DataSensor::getSensorValueWifi() {
+    int n = sprintf(ret_sen, "{\"ax\":%d,\"ay\":%d,\"az\":%d,\"gx\":%.2f,\"gy\":%.2f,\"gz\":%.2f}", pDataXYZ[0], pDataXYZ[1], pDataXYZ[2], pGyroDataXYZ[0]/1000, pGyroDataXYZ[1]/1000, pGyroDataXYZ[2]/1000);
+    return ret_sen;
+}
+
+char* DataSensor::getStdWifi() {
+    int n = sprintf(ret_std, "{\"ax\":%.2f,\"ay\":%.2f,\"az\":%.2f,\"all\":%.2f,\"ang0\":%.0f,\"ang1\":%.0f,\"ang2\":%.0f}", stm_x, stm_y, stm_z, stm_val, angle[0], angle[1], angle[2]);
+    return ret_std;
+}
+
+double* DataSensor::getSensorValueBLE() {
+    fillBLEArr();
+    return bleArr;
+}
+
+void DataSensor::updateStmStd() {
+    stm_x = getStd(buffer_stm_x);
+    stm_y = getStd(buffer_stm_y);
+    stm_z = getStd(buffer_stm_z);
+    stm_val = getStd(buffer_stm);
+}
+
+void DataSensor::fillBLEArr() {
+    bleArr[0] = stm_x;
+    bleArr[1] = stm_y;
+    bleArr[2] = stm_z;
+    bleArr[3] = stm_val;
+    bleArr[4] = angle[0];
+    bleArr[5] = angle[1];
+    bleArr[6] = angle[2];
 }
 
 void DataSensor::emptyCalibrationArrays() {
@@ -198,18 +230,22 @@ void DataSensor::update() {
     _buffer_p = (_buffer_p + 1) % SENSOR_BUFFER_SIZE;
 }
 
-void DataSensor::update_handler() {
+void DataSensor::sensorUpdateHandler() {
+    update();
+}
+
+void DataSensor::stdUpdateHandler() {
     char* xyz_sen = NULL;
-    char* xyz_stm = NULL;
+    char* xyz_std = NULL;
     char* xyz = NULL;
 
-    update();
+    updateStmStd();
+    // xyz_sen = printSensorValue();
+    xyz_std = printStd();
+    // nsapi_size_t size = strlen(xyz_stm);
 
-    xyz_stm = printStd();
-    nsapi_size_t size = strlen(xyz_stm);
-    xyz = xyz_stm;
-
-    printf("%s\n", xyz);
+    // printf("%s\n", xyz_sen);
+    printf("%s\n", xyz_std);
 }
 
 void DataSensor::button_release_detecting() {

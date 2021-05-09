@@ -26,3 +26,13 @@
 - Add long press features in the class
 - Modify Calibration methods (need to be reconfirmed)
 - Write a "WifiDataSensor" class based on "DataSensor", not complete
+
+### 5/9 Eric
+- Modify printStd and printSensorValue in DataSensor class
+- Create two event for updateSensor and updateStd with different timestep
+- Complete Wifi Sensor wrapper class
+- There are 3 threads in the program: main thread, sensor thread, and event thread
+- Separate Wifi send data process into: connectWifi, connectHost, and send_sensor_data
+- Able to connect to python program 
+- Add a test server (wifi-test.py) under connection folder
+- Collect 10 records instead of a single record to improve efficiency
