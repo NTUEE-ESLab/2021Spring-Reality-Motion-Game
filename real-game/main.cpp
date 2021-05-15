@@ -5,10 +5,10 @@
 // sensor module header
 
 // wifi module header
-#include "Sensor/my_wifi_sensor.h"
-#include "my_wifi.h"
+// #include "my_wifi_sensor.h"
 
 // BLE module header
+#include "my_ble_tag.h"
 
 
 // handle console ouput
@@ -29,17 +29,28 @@ Thread event_thread;
 
 int main() 
 {
-    WifiDataSensor* wifi_sensor = new WifiDataSensor(event_queue);
+    // WifiDataSensor* wifi_sensor = new WifiDataSensor(event_queue);
 
-    event_thread.start(callback(&event_queue, &EventQueue::dispatch_forever));
+    // event_thread.start(callback(&event_queue, &EventQueue::dispatch_forever));
 
-    sensor_thread.start(callback(wifi_sensor, &WifiDataSensor::startSensing));
+    // sensor_thread.start(callback(wifi_sensor, &WifiDataSensor::startSensing));
 
-    wifi_sensor->connectWifi();
+    // wifi_sensor->connectWifi();
 
-    wifi_sensor->connectHost();
+    // wifi_sensor->connectHost();
 
-    wifi_sensor->start();
+    // wifi_sensor->start();
+    BLE &ble = BLE::Instance();
+    events::EventQueue event_queue;
+    RealGameTaggingService demo_service;
+
+    // this process will handle basic ble setup and advertising for us 
+    GattServerProcess ble_process(event_queue, ble);
+
+    // once it's done it will let us continue with our demo 
+    ble_process.on_init(callback(&demo_service, &RealGameTaggingService::start));
+
+    ble_process.start();
 
     return 0;
 }
