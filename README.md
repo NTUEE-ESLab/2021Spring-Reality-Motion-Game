@@ -37,7 +37,7 @@
 - Add a test server (wifi-test.py) under connection folder
 - Collect 10 records instead of a single record to improve efficiency
 
-### 5/10, 5/11
+### 5/10, 5/11 Eric
 - Add BLE Tag Service
 - Refactor BLE code, separate BLE characteristics apart
 - Design a little bit about tag service
