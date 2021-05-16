@@ -4,6 +4,15 @@
 // https://docs.microsoft.com/zh-tw/cpp/cpp/class-templates?view=msvc-160
 // https://stackoverflow.com/questions/54095888/cant-use-override-in-function-c
 
+/*
+ * event_id -- read only
+ * event_level -- read only
+ * event_item -- read, write only
+ * event_challenger -- read, write only
+ * event_sign_in (button) -- notify only
+ * event_signal (led) -- write only
+ */
+
 /* Public */
 RealGameTaggingService::RealGameTaggingService() :
     _event_id(1, 20),
@@ -48,16 +57,13 @@ RealGameTaggingService::RealGameTaggingService() :
     _led_state.setWriteAuthorizationCallback(this, &RealGameTaggingService::led_client_write);
 }
 
-void RealGameTaggingService::start(BLE &ble, events::EventQueue &event_queue)
+void RealGameTaggingService::start(BLE &ble, EventQueue &event_queue)
 {
     _server = &ble.gattServer();
     _event_queue = &event_queue;
     ble_error_t err;
 
     printf("Registering demo service\r\n");
-    // err = _server->addService(_button_service);
-    // err = _server->addService(_led_service);
-    // err = _server->addService(_stu_id_service);
     err = _server->addService(_general_service);
 
     if (err)
@@ -70,7 +76,6 @@ void RealGameTaggingService::start(BLE &ble, events::EventQueue &event_queue)
     _server->setEventHandler(this);
 
     printf("button service registered\r\n");
-    // _event_queue->call_every(500ms, this, &RealGameTaggingService::blink);
     _button.fall(Callback<void()>(this, &RealGameTaggingService::button_pressed));
     _button.rise(Callback<void()>(this, &RealGameTaggingService::button_released));
 }
@@ -176,48 +181,3 @@ void RealGameTaggingService::onConfirmationReceived(const GattConfirmationReceiv
 }
 
 
-template<typename T> 
-RealGameTaggingService::
-ReadWriteNotifyIndicateCharacteristic<T>::
-ReadWriteNotifyIndicateCharacteristic(const UUID & uuid, const T& initial_value) :
-    GattCharacteristic(
-        /* UUID */ uuid,
-        /* Initial value */ &_value,
-        /* Value size */ sizeof(_value),
-        /* Value capacity */ sizeof(_value),
-        /* Properties */ GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_READ |
-                            GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_WRITE |
-                            GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY |
-                            GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_INDICATE,
-        /* Descriptors */ nullptr,
-        /* Num descriptors */ 0,
-        /* variable len */ false
-    ),
-    _value(initial_value) {}
-
-template<typename T> 
-ble_error_t 
-RealGameTaggingService::
-ReadWriteNotifyIndicateCharacteristic<T>::
-get(GattServer &server, T& dst) const
-{
-    uint16_t value_length = sizeof(dst);
-    return server.read(getValueHandle(), &dst, &value_length);
-}
-
-template<typename T> 
-ble_error_t 
-RealGameTaggingService::
-ReadWriteNotifyIndicateCharacteristic<T>::
-set(GattServer &server, const uint8_t &value, bool local_only) const
-{
-    return server.write(getValueHandle(), &value, sizeof(value), local_only);
-}
-
-template<typename T> 
-uint8_t 
-RealGameTaggingService::
-ReadWriteNotifyIndicateCharacteristic<T>::
-get_value(void) {
-    return _value;
-}

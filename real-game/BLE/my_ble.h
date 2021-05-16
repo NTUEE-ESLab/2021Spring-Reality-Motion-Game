@@ -1,8 +1,8 @@
 #ifndef __MY_BLE_H
 #define __MY_BLE_H
 
-#include "GattCharacteristic.h"
-#include "GattService.h"
+#include "ble/gatt/GattCharacteristic.h"
+#include "ble/gatt/GattService.h"
 #include "PinNames.h"
 #include "PinNamesTypes.h"
 #include "platform/Callback.h"
