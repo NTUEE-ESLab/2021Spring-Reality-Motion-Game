@@ -7,13 +7,13 @@
  * Example:
     BLE &ble = BLE::Instance();
     events::EventQueue event_queue;
-    RealGameTaggingService demo_service;
+    RealGameTaggingService real_game_service;
 
     // this process will handle basic ble setup and advertising for us 
     GattServerProcess ble_process(event_queue, ble);
 
     // once it's done it will let us continue with our demo 
-    ble_process.on_init(callback(&demo_service, &RealGameTaggingService::start));
+    ble_process.on_init(callback(&real_game_service, &RealGameTaggingService::start));
 
     ble_process.start();
 
@@ -100,24 +100,8 @@ private:
     ReadOnlyCharacteristic<uint8_t> _event_level;
     ReadWriteOnlyCharacteristic<uint8_t> _event_item;
     ReadWriteOnlyCharacteristic<uint8_t> _event_challenger;
-    NotifyOnlyCharacteristic<uint8_t> _event_sign_in;
-    WriteOnlyCharacteristic<uint8_t> _event_signal;
-
-    // button service and characteristic
-    GattService _button_service;
-    GattCharacteristic* _button_characteristics[1];
-
-    ReadWriteNotifyCharacteristic<bool> _button_state;
-
-    // led service and characteristic
-    GattService _led_service;
-    GattCharacteristic* _led_characteristics[1];
-
-    ReadWriteNotifyCharacteristic<bool> _led_state;
-
-    // try to combine three charateristic into one service
-    GattService _general_service;
-    GattCharacteristic* _general_characteristics[3];
+    NotifyOnlyCharacteristic<bool> _event_sign_in;
+    WriteOnlyCharacteristic<bool> _event_signal;
 };
 
 #endif

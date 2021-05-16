@@ -42,13 +42,13 @@ int main()
     // wifi_sensor->start();
     BLE &ble = BLE::Instance();
     events::EventQueue event_queue;
-    RealGameTaggingService demo_service;
+    RealGameTaggingService real_game_service;
 
     // this process will handle basic ble setup and advertising for us 
     GattServerProcess ble_process(event_queue, ble);
 
     // once it's done it will let us continue with our demo 
-    ble_process.on_init(callback(&demo_service, &RealGameTaggingService::start));
+    ble_process.on_init(callback(&real_game_service, &RealGameTaggingService::start));
 
     ble_process.start();
 

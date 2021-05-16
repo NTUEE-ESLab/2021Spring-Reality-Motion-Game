@@ -15,46 +15,30 @@
 
 /* Public */
 RealGameTaggingService::RealGameTaggingService() :
-    _event_id(1, 20),
+    _led1(LED1, 1),
+    _button(USER_BUTTON, PullUp),
+    _event_id(1, 1),
+    _event_level(2, 2),
+    _event_item(3, 3),
+    _event_challenger(4, 4),
+    _event_sign_in(5, false),
+    _event_signal(6, true),
     _event_service(
         /* uuid */ "A000",
         /* characteristics */ _event_characteristics,
-        /* numCharacteristics */ sizeof(_event_characteristics) /
-                                    sizeof(_event_characteristics[0])
-    ), 
-    _led1(LED1, 1),
-    _button(USER_BUTTON, PullUp),
-    _button_state(2, false),
-    _button_service(
-        /* uuid */ "A001",
-        /* characteristics */ _button_characteristics,
-        /* numCharacteristics */ sizeof(_button_characteristics) /
-                                    sizeof(_button_characteristics[0])
-    ), 
-    _led_state(3, true),
-    _led_service(
-        /* uuid */ "A002",
-        /* characteristics */ _led_characteristics,
-        /* numCharacteristics */ sizeof(_led_characteristics) /
-                                    sizeof(_led_characteristics[0])
-    ),
-    _general_service(
-        /* uuid */ "A003",
-        /* characteristics */ _general_characteristics,
-        /* numCharacteristics */ 3
+        /* numCharacteristics */ 6
     )
 {
     /* update internal pointers (value, descriptors and characteristics array) */
     _event_characteristics[0] = &_event_id;
-    _button_characteristics[0] = &_button_state;
-    _led_characteristics[0] = &_led_state;
+    _event_characteristics[1] = &_event_level;
+    _event_characteristics[2] = &_event_item;
+    _event_characteristics[3] = &_event_challenger;
+    _event_characteristics[4] = &_event_sign_in;
+    _event_characteristics[5] = &_event_signal;
 
-    // set up general characteristics
-    _general_characteristics[0] = &_event_id;
-    _general_characteristics[1] = &_button_state;
-    _general_characteristics[2] = &_led_state;
     /* setup authorization handlers */
-    _led_state.setWriteAuthorizationCallback(this, &RealGameTaggingService::led_client_write);
+    _event_signal.setWriteAuthorizationCallback(this, &RealGameTaggingService::led_client_write);
 }
 
 void RealGameTaggingService::start(BLE &ble, EventQueue &event_queue)
@@ -64,7 +48,7 @@ void RealGameTaggingService::start(BLE &ble, EventQueue &event_queue)
     ble_error_t err;
 
     printf("Registering demo service\r\n");
-    err = _server->addService(_general_service);
+    err = _server->addService(_event_service);
 
     if (err)
     {
@@ -83,7 +67,7 @@ void RealGameTaggingService::start(BLE &ble, EventQueue &event_queue)
 /* Private */
 void RealGameTaggingService::updateButtonState(bool newState) 
 {
-    ble_error_t err = _button_state.set(*_server, newState);
+    ble_error_t err = _event_sign_in.set(*_server, newState);
     if (err) {
         printf("write of the second value returned error %u\r\n", err);
         return;
