@@ -41,3 +41,9 @@
 - Add BLE Tag Service
 - Refactor BLE code, separate BLE characteristics apart
 - Design a little bit about tag service
+
+### 5/21 Emily
+- Distinguish between standing, walking, running, and jumping
+- Increase calibration time and decrease update motion frequency
+- Bug: getSensorTypeWifi() cannot return char* (replaced by int instead)
+
