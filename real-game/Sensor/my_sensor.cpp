@@ -1,11 +1,14 @@
 #include "my_sensor.h"
+#include "Events.h"
 #include "PinNames.h"
+#include <cstdio>
+#include <iterator>
 
 DataSensor::DataSensor(EventQueue &event_queue) : 
     _event_queue(event_queue), _buffer_p(0), _sample_num(0),
     AccOffset(), GyroOffset(),  pDataXYZ(), pGyroDataXYZ(),
     pGyroDataXYZ_prev(), angle(), buffer_stm(), buffer_stm_x(),
-    buffer_stm_y(), buffer_stm_z(), button(USER_BUTTON), led(LED1)
+    buffer_stm_y(), buffer_stm_z(), button(USER_BUTTON), led(LED1), high_flag(0), ret_type(0)
 {
     BSP_TSENSOR_Init();
     BSP_HSENSOR_Init();
@@ -65,8 +68,42 @@ char* DataSensor::getSensorValueWifi() {
 }
 
 char* DataSensor::getStdWifi() {
-    int n = sprintf(ret_std, "{\"ax\":%.2f,\"ay\":%.2f,\"az\":%.2f,\"all\":%.2f,\"ang0\":%.0f,\"ang1\":%.0f,\"ang2\":%.0f}", stm_x, stm_y, stm_z, stm_val, angle[0], angle[1], angle[2]);
+    int n = sprintf(ret_std, "{\"ax\":%.2f,\"ay\":%.2f,\"az\":%.2f,\"all\":%.2f,\"diff\":%.2f,\"ang0\":%.0f,\"ang1\":%.0f,\"ang2\":%.0f}", stm_x, stm_y, stm_z, stm_val, stm_diff, angle[0], angle[1], angle[2]);
     return ret_std;
+}
+
+int DataSensor::getSensorTypeWifi() {
+    if (stm_diff < 100) {
+        // int n = sprintf(ret_type, "stand");
+        if (high_flag > 0 && high_flag < 5) {
+            ret_type = 4;
+        }
+        else {
+            ret_type = 1;
+        }
+        high_flag = 0;
+    }
+    else {
+        if (stm_diff < 1000) {
+            if (high_flag > 0 && high_flag < 7) {
+                // int n = sprintf(ret_type, "jump");
+                ret_type = 4;
+            }
+            else {
+                // int n = sprintf(ret_type, "walk");
+                ret_type = 2;
+                high_flag = 0;
+            }
+        }
+        else {
+            high_flag += 1;
+            if (high_flag > 5) {
+                // int n = sprintf(ret_type, "run");
+                ret_type = 3;
+            }
+        }
+    }
+    return ret_type;
 }
 
 double* DataSensor::getSensorValueBLE() {
@@ -115,7 +152,7 @@ void DataSensor::incrementSampling() {
 void DataSensor::collectSamples() {
     _sample_num = 0;
 
-    while (_sample_num < 500) {
+    while (_sample_num < 1000) {
         _sample_num++;
         
         incrementSampling();
@@ -198,6 +235,11 @@ float DataSensor::square_pData() {
     return square((float)pDataXYZ[0]) + square((float)pDataXYZ[1]) + square((float)pDataXYZ[2]);
 }
 
+float DataSensor::square_diffData() {
+    float n = square((float)buffer_stm_x[_buffer_p]) + square((float)buffer_stm_y[_buffer_p]) + square((float)buffer_stm_z[_buffer_p]);
+    return sqrt(n);
+}
+
 float DataSensor::getSqrtMean_pData() {
     return sqrt(square_pData());
 }
@@ -215,9 +257,13 @@ void DataSensor::calculateAngle() {
 void DataSensor::update() {
     sampling();
 
-    buffer_stm_x[_buffer_p] = (float)pDataXYZ[0];
-    buffer_stm_y[_buffer_p] = (float)pDataXYZ[1];
-    buffer_stm_z[_buffer_p] = (float)pDataXYZ[2];
+    buffer_stm_x[_buffer_p] = (float)(pDataXYZ[0]-prev_stm_x);
+    buffer_stm_y[_buffer_p] = (float)(pDataXYZ[1]-prev_stm_y);
+    buffer_stm_z[_buffer_p] = (float)(pDataXYZ[2]-prev_stm_z);
+
+    prev_stm_x = pDataXYZ[0];
+    prev_stm_y = pDataXYZ[1];
+    prev_stm_z = pDataXYZ[2];
 
     // Not sure
     // ThisThread::sleep_for(TIMESTEP);
@@ -225,6 +271,7 @@ void DataSensor::update() {
     calculateAngle();
 
     buffer_stm[_buffer_p] = getSqrtMean_pData();
+    stm_diff = square_diffData();
 
     // Move pointer position
     _buffer_p = (_buffer_p + 1) % SENSOR_BUFFER_SIZE;
@@ -245,7 +292,7 @@ void DataSensor::stdUpdateHandler() {
     // nsapi_size_t size = strlen(xyz_stm);
 
     // printf("%s\n", xyz_sen);
-    printf("%s\n", xyz_std);
+    //printf("%s\n", xyz_std);
 }
 
 void DataSensor::button_release_detecting() {

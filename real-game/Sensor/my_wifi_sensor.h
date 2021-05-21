@@ -11,8 +11,8 @@
 #include <string>
 
 #define WIFI_IDW0XX1    2
-#define IP_ADDRESS "192.168.50.252"
-#define PORT 30004
+#define IP_ADDRESS "172.20.10.2"
+#define PORT 65434
 // #define SAMPLE_RATE
 
 class WifiDataSensor {
@@ -20,7 +20,7 @@ public:
     // Constructor
     WifiDataSensor(EventQueue &event_queue) : 
         data_sensor(event_queue), _event_queue(event_queue), 
-        _wifi(false), buffer(), record_count(0), xyz_std(NULL) {
+        _wifi(false), buffer(), record_count(0), xyz_std(NULL), type(0) {
             std_records = string();
         }
 
@@ -53,6 +53,7 @@ private:
     string std_records;
     int record_count;
     char* xyz_std;
+    int type;
     
 };
 

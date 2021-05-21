@@ -1,7 +1,9 @@
 #include "my_wifi_sensor.h"
 #include "WiFiAccessPoint.h"
 #include "my_sensor.h"
+#include "sn_coap_header.h"
 #include <cstdio>
+#include <string>
 
 void WifiDataSensor::print_wifi_info() {
     printf("MAC: %s\n", _wifi.get_mac_address()); 
@@ -62,7 +64,18 @@ void WifiDataSensor::startSensing() {
 void WifiDataSensor::send_sensor_data() {
     record_count++;
     xyz_std = data_sensor.getStdWifi();
-
+    type = data_sensor.getSensorTypeWifi();
+    
+    // printf("%s\n", xyz_std);
+    // printf("%d\n", type);
+    
+    switch(type) {
+        case 1: printf("stand\n"); break;
+        case 2: printf("walk\n"); break;
+        case 3: printf("run\n"); break;
+        case 4: printf("jump\n"); break;
+        default: break;
+    }
 
     if(record_count % 10 == 0) {
         int len = 0;
@@ -127,5 +140,5 @@ void WifiDataSensor::start()
     if (response != 0) return;
 
     // Start sending sensor data
-    _event_queue.call_every(10, this, &WifiDataSensor::send_sensor_data);
+    _event_queue.call_every(100, this, &WifiDataSensor::send_sensor_data);
 }

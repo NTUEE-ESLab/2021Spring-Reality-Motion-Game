@@ -45,6 +45,8 @@ public:
 
     char* getStdWifi();
 
+    int getSensorTypeWifi();
+
     double* getSensorValueBLE();
 
     double* getStdBLE();
@@ -76,6 +78,12 @@ private:
     int buffer_stm_z[SENSOR_BUFFER_SIZE];
     int buffer_stm[SENSOR_BUFFER_SIZE];
 
+    // Last buffer value
+    double prev_stm_x;
+    double prev_stm_y;
+    double prev_stm_z;
+    double stm_diff;
+
     // Std values
     double stm_x;
     double stm_y;
@@ -91,6 +99,11 @@ private:
     // Print Buffer
     char* ret_sen;
     char* ret_std;
+    // char* ret_type;
+    int ret_type;
+
+    // Record buffer high time for jump and run
+    int high_flag;
 
     // Button Event
     DigitalOut led;
@@ -136,6 +149,9 @@ private:
 
     // Get square value of the pData array
     float square_pData();
+
+    // Get square value of diff pData
+    float square_diffData();
 
     // Get square root mean of the pData array
     float getSqrtMean_pData();
