@@ -8,7 +8,7 @@ DataSensor::DataSensor(EventQueue &event_queue) :
     _event_queue(event_queue), _buffer_p(0), _sample_num(0),
     AccOffset(), GyroOffset(),  pDataXYZ(), pGyroDataXYZ(),
     pGyroDataXYZ_prev(), angle(), buffer_stm(), buffer_stm_x(),
-    buffer_stm_y(), buffer_stm_z(), button(USER_BUTTON), led(LED1), high_flag(0), ret_type(0)
+    buffer_stm_y(), buffer_stm_z(), button(USER_BUTTON), led(LED1), high_flag_start(0), high_flag_end(0), ret_type(0)
 {
     BSP_TSENSOR_Init();
     BSP_HSENSOR_Init();
@@ -73,36 +73,48 @@ char* DataSensor::getStdWifi() {
 }
 
 int DataSensor::getSensorTypeWifi() {
+    // int n = ret_type;
     if (stm_diff < 100) {
         // int n = sprintf(ret_type, "stand");
-        if (high_flag > 0 && high_flag < 5) {
+        if (high_flag_start != 0 && high_flag_end - high_flag_start > 5) {
             ret_type = 4;
+            high_flag_end += 1;
         }
         else {
             ret_type = 1;
+            high_flag_start = 0;
+            high_flag_end = 0;
         }
-        high_flag = 0;
     }
     else {
         if (stm_diff < 1000) {
-            if (high_flag > 0 && high_flag < 7) {
+            if (high_flag_start != 0 && high_flag_end - high_flag_start < 5) {
                 // int n = sprintf(ret_type, "jump");
                 ret_type = 4;
+                high_flag_end += 1;
             }
             else {
                 // int n = sprintf(ret_type, "walk");
                 ret_type = 2;
-                high_flag = 0;
+                high_flag_start = 0;
+                high_flag_end = 0;
             }
         }
         else {
-            high_flag += 1;
-            if (high_flag > 5) {
+            if (high_flag_start == 0) {
+                high_flag_start = _buffer_p;
+                high_flag_end = high_flag_start;
+            } 
+            else {
+                high_flag_end += 1;
+            }
+            if (high_flag_end - high_flag_start > 5) {
                 // int n = sprintf(ret_type, "run");
                 ret_type = 3;
             }
         }
     }
+    // ret_type = n;
     return ret_type;
 }
 

@@ -103,7 +103,8 @@ private:
     int ret_type;
 
     // Record buffer high time for jump and run
-    int high_flag;
+    int high_flag_start;
+    int high_flag_end;
 
     // Button Event
     DigitalOut led;
