@@ -9,6 +9,7 @@
 
 // BLE module header
 #include "my_ble_tag.h"
+#include "my_ble_scan_tag.h"
 
 
 // handle console ouput
@@ -25,6 +26,7 @@ FileHandle *mbed::mbed_override_console(int fd)
 EventQueue event_queue(64 * EVENTS_EVENT_SIZE);
 Thread sensor_thread;
 Thread event_thread;
+Thread adv_thread;
 
 
 int main() 
