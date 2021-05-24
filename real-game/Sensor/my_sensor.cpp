@@ -1,6 +1,7 @@
 #include "my_sensor.h"
 #include "Events.h"
 #include "PinNames.h"
+#include <cstdint>
 #include <cstdio>
 #include <iterator>
 
@@ -8,7 +9,7 @@ DataSensor::DataSensor(EventQueue &event_queue) :
     _event_queue(event_queue), _buffer_p(0), _sample_num(0),
     AccOffset(), GyroOffset(),  pDataXYZ(), pGyroDataXYZ(),
     pGyroDataXYZ_prev(), angle(), buffer_stm(), buffer_stm_x(),
-    buffer_stm_y(), buffer_stm_z(), button(USER_BUTTON), led(LED1), high_flag_start(0), high_flag_end(0), ret_type(0)
+    buffer_stm_y(), buffer_stm_z(), button(USER_BUTTON), led(LED1), high_flag_start(0), high_flag_end(0), ret_type(0), motion_type()
 {
     BSP_TSENSOR_Init();
     BSP_HSENSOR_Init();
@@ -118,9 +119,16 @@ int DataSensor::getSensorTypeWifi() {
     return ret_type;
 }
 
-double* DataSensor::getSensorValueBLE() {
-    fillBLEArr();
-    return bleArr;
+uint8_t* DataSensor::getSensorTypeBLE() {
+    updateMotionType();
+    return motion_type;
+}
+
+void DataSensor::updateMotionType() {
+    motion_type[0] = 0;
+    motion_type[1] = 1;
+    motion_type[2] = 0;
+    motion_type[3] = 1;
 }
 
 void DataSensor::updateStmStd() {

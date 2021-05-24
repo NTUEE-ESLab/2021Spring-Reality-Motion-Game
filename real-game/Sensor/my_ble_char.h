@@ -170,4 +170,5 @@ public:
                                 GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_INDICATE) {}
 };
 
+
 #endif

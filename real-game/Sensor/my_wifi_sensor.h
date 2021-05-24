@@ -54,7 +54,6 @@ private:
     int record_count;
     char* xyz_std;
     int type;
-    
 };
 
 #endif

@@ -32,9 +32,47 @@ public:
 
     const char* get_device_name() override
     {
-        static const char name[] = "RealGameTaggingService";
+        static const char name[] = "NormalService";
         return name;
     }
 };
+
+/**
+ * Simple GattServer wrapper. It will advertise and allow a connection.
+ */
+class GattServerMotionProcess : public BLEProcess
+{
+public:
+    GattServerMotionProcess(events::EventQueue &event_queue, BLE &ble_interface) :
+        BLEProcess(event_queue, ble_interface)
+    {
+    }
+
+    const char* get_device_name() override
+    {
+        static const char name[] = "MotionService";
+        return name;
+    }
+};
+
+/**
+ * Simple GattServer wrapper. It will advertise and allow a connection.
+ */
+class GattServerTagProcess : public BLEProcess
+{
+public:
+    GattServerTagProcess(events::EventQueue &event_queue, BLE &ble_interface) :
+        BLEProcess(event_queue, ble_interface)
+    {
+    }
+
+    const char* get_device_name() override
+    {
+        static const char name[] = "TagService";
+        return name;
+    }
+};
+
+
 
 #endif /* GATT_SERVER_PROCESS_H_ */

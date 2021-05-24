@@ -47,3 +47,7 @@
 - Increase calibration time and decrease update motion frequency
 - Bug: getSensorTypeWifi() cannot return char* (replaced by int instead)
 
+### 5/24 Eric
+- Add BLE Motion Service
+- It it a wrapper of data sensor, one can connect the "MotionService" to get data
+- I just write a template, not yet integrated with the true motion value

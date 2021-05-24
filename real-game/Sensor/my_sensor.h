@@ -16,6 +16,7 @@
 #include "mbed_events.h" 
 #include "ThisThread.h"
 #include "PinNames.h"
+#include <cstdint>
 
 #define SENSOR_BUFFER_SIZE 50
 #define SCALE_MULTIPLIER 0.045
@@ -47,9 +48,8 @@ public:
 
     int getSensorTypeWifi();
 
-    double* getSensorValueBLE();
+    uint8_t* getSensorTypeBLE();
 
-    double* getStdBLE();
 
     // Update sensor data buffer
     void update();
@@ -101,6 +101,7 @@ private:
     char* ret_std;
     // char* ret_type;
     int ret_type;
+    uint8_t motion_type[5];
 
     // Record buffer high time for jump and run
     int high_flag_start;
@@ -141,6 +142,8 @@ private:
     void updateStmStd();
 
     void fillBLEArr();
+
+    void updateMotionType();
 
     // Get Acce and Gyro data
     void sampling();
