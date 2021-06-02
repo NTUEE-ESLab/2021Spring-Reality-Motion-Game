@@ -51,3 +51,7 @@
 - Add BLE Motion Service
 - It it a wrapper of data sensor, one can connect the "MotionService" to get data
 - I just write a template, not yet integrated with the true motion value
+
+### 6/1 Emily
+- Still working on motion detection
+- Quick demo video: https://youtu.be/3e2XkRUkQSk
