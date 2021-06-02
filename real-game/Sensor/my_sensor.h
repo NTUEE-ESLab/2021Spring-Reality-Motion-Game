@@ -18,7 +18,7 @@
 #include "PinNames.h"
 #include <cstdint>
 
-#define SENSOR_BUFFER_SIZE 50
+#define SENSOR_BUFFER_SIZE 20
 #define SCALE_MULTIPLIER 0.045
 #define SENSOR_TIMESTEP 1
 #define STD_TIMESTEP 50
@@ -46,7 +46,9 @@ public:
 
     char* getStdWifi();
 
-    int getSensorTypeWifi();
+    char* getSensorType();
+
+    void calculateMotion();
 
     uint8_t* getSensorTypeBLE();
 
@@ -56,6 +58,8 @@ public:
 
 
     double bleArr[7];
+
+    uint8_t valueBytes[8];
 
 
 private:
@@ -78,17 +82,26 @@ private:
     int buffer_stm_z[SENSOR_BUFFER_SIZE];
     int buffer_stm[SENSOR_BUFFER_SIZE];
 
+    // Buffer for angles
+    int buffer_ang0[SENSOR_BUFFER_SIZE];
+    int buffer_ang1[SENSOR_BUFFER_SIZE];
+    int buffer_ang2[SENSOR_BUFFER_SIZE];
+
     // Last buffer value
     double prev_stm_x;
     double prev_stm_y;
     double prev_stm_z;
     double stm_diff;
+    double stm_all;
 
     // Std values
     double stm_x;
     double stm_y;
     double stm_z;
     double stm_val;
+    double stm_ang0;
+    double stm_ang1;
+    double stm_ang2;
 
     // Buffer pointer
     int _buffer_p;
@@ -99,13 +112,17 @@ private:
     // Print Buffer
     char* ret_sen;
     char* ret_std;
-    // char* ret_type;
-    int ret_type;
+    char* ret_type;
+    // int ret_type;
     uint8_t motion_type[5];
 
     // Record buffer high time for jump and run
     int high_flag_start;
     int high_flag_end;
+    int high_flag;
+
+    // Motion types
+    int _stand, _walk, _run, _raise, _punch, _twist;
 
     // Button Event
     DigitalOut led;

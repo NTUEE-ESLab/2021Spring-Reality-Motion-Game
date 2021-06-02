@@ -64,34 +64,36 @@ void WifiDataSensor::startSensing() {
 void WifiDataSensor::send_sensor_data() {
     record_count++;
     xyz_std = data_sensor.getStdWifi();
-    type = data_sensor.getSensorTypeWifi();
+    // xyz_std = data_sensor.getSensorValueWifi();
+    data_sensor.getSensorType();
+
     
-    // printf("%s\n", xyz_std);
+    printf("%s\n", xyz_std);
     // printf("%d\n", type);
     
-    switch(type) {
-        case 1: printf("stand\n"); break;
-        case 2: printf("walk\n"); break;
-        case 3: printf("run\n"); break;
-        case 4: printf("jump\n"); break;
-        default: break;
-    }
+    // switch(type) {
+    //     case 1: printf("stand\n"); break;
+    //     case 2: printf("walk\n"); break;
+    //     case 3: printf("run\n"); break;
+    //     case 4: printf("jump\n"); break;
+    //     default: break;
+    // }
 
-    if(record_count % 10 == 0) {
-        int len = 0;
+    // if(record_count % 10 == 0) {
+    //     int len = 0;
 
-        len = sprintf(buffer, "%s", std_records.c_str());
+    //     len = sprintf(buffer, "%s", std_records.c_str());
         
-        response = socket.send(buffer,len); 
-        if (0 >= response){
-            printf("Error seding: %d\n", response); 
-        }
+    //     response = socket.send(buffer,len); 
+    //     if (0 >= response){
+    //         printf("Error seding: %d\n", response); 
+    //     }
 
-        std_records.clear();
+    //     std_records.clear();
 
-    } else {
-        std_records += string(xyz_std);
-    }
+    // } else {
+    //     std_records += string(xyz_std);
+    // }
 }
 
 void WifiDataSensor::connectWifi() {
@@ -137,7 +139,7 @@ void WifiDataSensor::disconnect() {
 void WifiDataSensor::start()
 {
     // Not successfully connected
-    if (response != 0) return;
+    // if (response != 0) return;
 
     // Start sending sensor data
     _event_queue.call_every(100, this, &WifiDataSensor::send_sensor_data);
