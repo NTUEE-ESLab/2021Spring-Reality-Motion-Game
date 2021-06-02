@@ -55,3 +55,6 @@
 ### 6/1 Emily
 - Still working on motion detection
 - Quick demo video: https://youtu.be/3e2XkRUkQSk
+
+### Progress Report 
+https://docs.google.com/presentation/d/1QpmcDUexZokhLhzRx4198VfW1-WgqPi4YffoX4_mxNY/edit?usp=sharing
