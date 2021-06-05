@@ -65,11 +65,18 @@ void WifiDataSensor::send_sensor_data() {
     record_count++;
     xyz_std = data_sensor.getStdWifi();
     // xyz_std = data_sensor.getSensorValueWifi();
-    data_sensor.getSensorType();
+    // data_sensor.getSensorType();
 
-    
-    printf("%s\n", xyz_std);
+    // printf("%s\n", xyz_std);
     // printf("%d\n", type);
+    int len = 0;
+
+    len = sprintf(buffer, "%s", xyz_std);
+
+    response = socket.send(buffer,len); 
+    if (0 >= response){
+        printf("Error sending: %d\n", response); 
+    }
     
     // switch(type) {
     //     case 1: printf("stand\n"); break;
@@ -120,7 +127,6 @@ void WifiDataSensor::connectHost() {
     }
 
     a.set_port(PORT);
-
     
     response = socket.connect(a);
 
@@ -138,9 +144,6 @@ void WifiDataSensor::disconnect() {
 
 void WifiDataSensor::start()
 {
-    // Not successfully connected
-    // if (response != 0) return;
-
     // Start sending sensor data
-    _event_queue.call_every(100, this, &WifiDataSensor::send_sensor_data);
+    _event_queue.call_every(50, this, &WifiDataSensor::send_sensor_data);
 }

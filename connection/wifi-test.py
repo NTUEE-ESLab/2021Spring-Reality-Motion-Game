@@ -11,13 +11,13 @@ import os
 def main():
 
     # HOST = '127.0.0.1'  # Standard loopback interface address (localhost)
-    HOST = '192.168.50.252'
-    PORT = 30004       # Port to listen on (non-privileged ports are > 1023)
+    HOST = '192.168.1.254'
+    PORT = 30006       # Port to listen on (non-privileged ports are > 1023)
     acce = [[] for _ in range(3)]
     gyro = [[] for _ in range(3)]
 
-    acce_labels = ['a_x', 'a_y', 'a_z']
-    gyro_labels = ['g_x', 'g_y', 'g_z']
+    acce_labels = ['ax', 'ay', 'az']
+    gyro_labels = ['gx', 'gy', 'gz']
     axis = ['X', 'Y', 'Z']
     array_s = []
     data_count = 0
@@ -26,7 +26,8 @@ def main():
     gyro_scale = 1000
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        # s.setsockopt(socket.SOL_SOCKET, socket.REUSEADDR, 1)
+        # To reuse the same port for each connection
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind((HOST, PORT))
         s.listen()
         conn, addr = s.accept()
@@ -58,12 +59,16 @@ def main():
                                          json_data['ang1'] / gyro_scale,
                                          json_data['ang2'] / gyro_scale]
 
+                            val = json_data['val']
+                            all = json_data['all']
+                            diff = json_data['diff']
+
                             # # put data in the array
                             # for i in range(3):
                             #     acce[i].append(acce_data[i])
                             #     gyro[i].append(gyro_data[i])
                             print(
-                                f'{data_count}. ACCE: {acce_data[0]}, {acce_data[1]}, {acce_data[2]} GYRO: {gyro_data[0]}, {gyro_data[1]}, {gyro_data[2]}')
+                                f'{data_count}. ACCE -- X:{acce_data[0]}, Y:{acce_data[1]}, Z:{acce_data[2]} GYRO -- X:{gyro_data[0]}, Y:{gyro_data[1]}, Z:{gyro_data[2]}, Val: {val}, All: {all}, Diff: {diff}')
 
                     except json.decoder.JSONDecodeError:
                         print("JSONDecodeError!!!")

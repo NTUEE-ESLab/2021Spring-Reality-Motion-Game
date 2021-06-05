@@ -6,11 +6,11 @@
         },
         "wifi-ssid": {
             "help": "WiFi SSID",
-            "value": "\"esys305\""
+            "value": "\"CTHomegn\""
         },
         "wifi-password": {
             "help": "WiFi Password",
-            "value": "\"305305abcd\""
+            "value": "\"asetj1314\""
         },
         "wifi-tx": {
             "help": "TX pin for serial connection to external device",

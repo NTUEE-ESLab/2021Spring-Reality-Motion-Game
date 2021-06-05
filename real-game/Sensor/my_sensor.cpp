@@ -70,7 +70,7 @@ char* DataSensor::getSensorValueWifi() {
 }
 
 char* DataSensor::getStdWifi() {
-    int n = sprintf(ret_std, "{\"ax\":%.2f,\"ay\":%.2f,\"az\":%.2f,\"all\":%.2f %.2f,\"diff\":%.2f,\"ang0\":%.0f,\"ang1\":%.0f,\"ang2\":%.0f}", stm_x, stm_y, stm_z, stm_val, stm_all, stm_diff, angle[0], angle[1], angle[2]);
+    int n = sprintf(ret_std, "{\"ax\":%.2f,\"ay\":%.2f,\"az\":%.2f,\"val\":%.2f,\"all\":%.2f,\"diff\":%.2f,\"ang0\":%.0f,\"ang1\":%.0f,\"ang2\":%.0f}", stm_x, stm_y, stm_z, stm_val, stm_all, stm_diff, angle[0], angle[1], angle[2]);
     return ret_std;
 }
 
