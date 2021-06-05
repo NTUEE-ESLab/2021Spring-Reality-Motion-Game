@@ -1,6 +1,6 @@
 import pygame
 
-from utils import load_sprite
+from utils import load_sprite, print_status
 from models import Player
 
 
@@ -27,6 +27,7 @@ class TreasureHunt:
         self.background = load_sprite("space", False)
         self.clock = pygame.time.Clock()
         self.font = pygame.font.Font(None, 64)
+        self.status_font = pygame.font.Font(None, 20)
         self.player = Player((400, 300), self.bullets.append)
 
     def main_loop(self):
@@ -66,6 +67,8 @@ class TreasureHunt:
         for game_object in self._get_game_objects():
             game_object.move(self.screen)
 
+        self.message = f'POS: {self.player.get_position()}, SPEED: {self.player.get_velocity()}'
+
         # for asteroid in self.asteroids:
         #     if asteroid.collides_with(self.spaceship):
         #         self.spaceship = None
@@ -97,8 +100,8 @@ class TreasureHunt:
         for game_object in self._get_game_objects():
             game_object.draw(self.screen)
 
-        # if self.message:
-        #     print_text(self.screen, self.message, self.font)
+        if self.message:
+            print_status(self.screen, self.message, self.status_font)
 
         pygame.display.flip()
 

@@ -42,6 +42,12 @@ class Player(GameObject):
     def get_radius(self):
         return self.radius
 
+    def get_position(self):
+        return self.position
+
+    def get_velocity(self):
+        return self.velocity
+
     def rotate(self, angle=3, clockwise=True):
         sign = 1 if clockwise else -1
         angle = angle * sign

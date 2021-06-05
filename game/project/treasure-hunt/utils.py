@@ -63,3 +63,12 @@ def print_text(surface, text, font, color=Color("tomato")):
     rect.center = Vector2(surface.get_size()) / 2
 
     surface.blit(text_surface, rect)
+
+
+def print_status(surface, text, font, color=Color("tomato")):
+    text_surface = font.render(text, True, color)
+
+    rect = text_surface.get_rect()
+    rect.center = Vector2(400, 25)
+
+    surface.blit(text_surface, rect)
