@@ -20,9 +20,9 @@ def main():
     gyro_labels = ['gx', 'gy', 'gz']
     axis = ['X', 'Y', 'Z']
     array_s = []
+    sample_rate = 0.1
     data_count = 0
     error_count = 0
-    sample_rate = 0.1
     gyro_scale = 1000
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
