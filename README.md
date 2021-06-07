@@ -58,3 +58,9 @@
 
 ### Progress Report 
 https://docs.google.com/presentation/d/1QpmcDUexZokhLhzRx4198VfW1-WgqPi4YffoX4_mxNY/edit?usp=sharing
+
+### 6/7 Eric
+- Write a game template under game/project, type `python treasure_hunt` to activate the game
+- Fix the reused port problem
+- Integrate wifi with game
+- Add another thread to listen from sensor to prevent blocking (I/O bound) to boose game speed
