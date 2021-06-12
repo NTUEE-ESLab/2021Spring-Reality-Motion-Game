@@ -35,7 +35,7 @@ void DataSensor::start() {
     calibration();
 
     // add update event to event queue
-    _event_queue.call_every(SENSOR_TIMESTEP, this, &DataSensor::sensorUpdateHandler);
+    _event_queue.call_every(TIMESTEP, this, &DataSensor::sensorUpdateHandler);
     _event_queue.call_every(STD_TIMESTEP, this, &DataSensor::stdUpdateHandler);
 }
 
@@ -335,7 +335,7 @@ void DataSensor::calculateAngle() {
     int prev_ang2 = angle[2];
     for (int i = 0; i < 3; i++) {
         // if (abs(pGyroDataXYZ[i]) * SCALE_MULTIPLIER > 100) {
-        angle[i] += (pGyroDataXYZ[i] + pGyroDataXYZ_prev[i]) / 2 * TIMESTEP * SCALE_MULTIPLIER * 0.001;
+        angle[i] += (pGyroDataXYZ[i] + pGyroDataXYZ_prev[i]) / 2 * STD_TIMESTEP * SCALE_MULTIPLIER * 0.001;
         // }
         pGyroDataXYZ_prev[i] = pGyroDataXYZ[i];
     }

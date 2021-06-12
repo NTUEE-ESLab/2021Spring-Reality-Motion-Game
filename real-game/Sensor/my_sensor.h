@@ -20,9 +20,8 @@
 
 #define SENSOR_BUFFER_SIZE 20
 #define SCALE_MULTIPLIER 0.045
-#define SENSOR_TIMESTEP 1
+#define TIMESTEP 1
 #define STD_TIMESTEP 20
-#define TIMESTEP 20
 #define MOTION_BUFFER_SIZE 10
 
 extern EventQueue event_queue;
