@@ -73,18 +73,11 @@ void WifiDataSensor::send_sensor_data() {
 
     len = sprintf(buffer, "%s", xyz_std);
 
-    response = socket.send(buffer,len); 
-    if (0 >= response){
-        printf("Error sending: %d\n", response); 
-    }
-    
-    // switch(type) {
-    //     case 1: printf("stand\n"); break;
-    //     case 2: printf("walk\n"); break;
-    //     case 3: printf("run\n"); break;
-    //     case 4: printf("jump\n"); break;
-    //     default: break;
+    // response = socket.send(buffer,len); 
+    // if (0 >= response){
+    //     printf("Error sending: %d\n", response); 
     // }
+    
 
     // if(record_count % 10 == 0) {
     //     int len = 0;
@@ -145,5 +138,5 @@ void WifiDataSensor::disconnect() {
 void WifiDataSensor::start()
 {
     // Start sending sensor data
-    _event_queue.call_every(50, this, &WifiDataSensor::send_sensor_data);
+    _event_queue.call_every(100, this, &WifiDataSensor::send_sensor_data);
 }

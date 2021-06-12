@@ -21,8 +21,9 @@
 #define SENSOR_BUFFER_SIZE 20
 #define SCALE_MULTIPLIER 0.045
 #define SENSOR_TIMESTEP 1
-#define STD_TIMESTEP 50
-#define TIMESTEP 50
+#define STD_TIMESTEP 20
+#define TIMESTEP 20
+#define MOTION_BUFFER_SIZE 10
 
 extern EventQueue event_queue;
 
@@ -88,6 +89,9 @@ private:
     int buffer_ang2[SENSOR_BUFFER_SIZE];
 
     // Last buffer value
+    double prev_buffer_x;
+    double prev_buffer_y;
+    double prev_buffer_z;
     double prev_stm_x;
     double prev_stm_y;
     double prev_stm_z;
@@ -115,14 +119,20 @@ private:
     char* ret_type;
     // int ret_type;
     uint8_t motion_type[5];
+    int motion_type_wifi;
 
     // Record buffer high time for jump and run
     int high_flag_start;
     int high_flag_end;
     int high_flag;
+    int twist_flag;
 
     // Motion types
-    int _stand, _walk, _run, _raise, _punch, _twist;
+    int _stand, _walk, _run, _raise, _punch, _right, _left;
+
+    // Motion buffers
+    int motion_buffer[MOTION_BUFFER_SIZE];
+    int _motion_buffer_p;
 
     // Button Event
     DigitalOut led;
