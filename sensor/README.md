@@ -1,18 +1,36 @@
 ## Add sliding window to accelerometer and gyro
 
+### Sensor class
+- Calibration.
+- Update sensor values.
+- Update standard values.
+- Detect motion type.
+
 ### Accelerometer
-- Choose sliding window number to 50.
-- Compute the square-root-mean.
+- Set sliding window number to 20.
+- Buffer the current accelerometer value with the previous one.
+- Compute the root-mean-square of the buffer values.
+- Also keep track of the current amplitude.
 
 ### Gyro
-- Compare the three gyro values with the previous values.
-- The value of angle shows how much turning in that direction is.
-- Modify this part for future use.
+- Compute the summation (in place of integral) to get the range of rotation (angle[i]).
+- Compare the 3D rotation range values with the previous ones and store in buffer.
+- Compute the root-mean-square of the buffer values to determine the rotation axis.
+- Sign of angle indicates clockwise or counter-clockwise.
 
-### Sensor class
-- Currently sets update to public function and calls it at TIMESTEP interval.
-- Should put it to eventqueue in the future.
-- Calibration added.
+### Motion detect
+- Use standard value of angle[1] to tell twisting.
+- Use stm-diff to tell intensity of motion, group (stand) (run) (walk/raise/punch)
+- Use stm-all and stm-y to distinguish between raise and punch.
+
+### EventQueue
+- Calls sensor update every TIMESTEP interval (1ms)
+- Calculate std values motion type every STD-TIMESTEP interval (20ms)
+- Sends motion type to server every 0.1s
+
+### User Button
+- Button thread.
+- Long press (>2s) triggers calibration.
 
 ### Problem
-- Error sending the data to python server.
+- Delay in motion update
