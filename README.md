@@ -64,3 +64,7 @@ https://docs.google.com/presentation/d/1QpmcDUexZokhLhzRx4198VfW1-WgqPi4YffoX4_m
 - Fix the reused port problem
 - Integrate wifi with game
 - Add another thread to listen from sensor to prevent blocking (I/O bound) to boose game speed
+
+### 6/12 Emily
+- Complete 7 motion types: stand, walk, run, raise, punch, right, left
+- Right and left lags more
