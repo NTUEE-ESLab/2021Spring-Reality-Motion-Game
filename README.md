@@ -68,3 +68,5 @@ https://docs.google.com/presentation/d/1QpmcDUexZokhLhzRx4198VfW1-WgqPi4YffoX4_m
 ### 6/12 Emily
 - Complete 7 motion types: stand, walk, run, raise, punch, right, left
 - Right and left lags more
+- Wifi send motion type to server (server-simple.py)
+
