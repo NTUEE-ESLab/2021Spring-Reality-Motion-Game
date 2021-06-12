@@ -10,7 +10,7 @@ DataSensor::DataSensor(EventQueue &event_queue) :
     _event_queue(event_queue), _buffer_p(0), _sample_num(0),
     AccOffset(), GyroOffset(),  pDataXYZ(), pGyroDataXYZ(),
     pGyroDataXYZ_prev(), angle(), buffer_stm(), buffer_stm_x(),
-    buffer_stm_y(), buffer_stm_z(), button(USER_BUTTON), led(LED1), high_flag_start(0), high_flag_end(0), ret_type(0), motion_type(),
+    buffer_stm_y(), buffer_stm_z(), button(USER_BUTTON), led(LED1), high_flag_start(0), high_flag_end(0), motion_type(),
     _motion_buffer_p(0), motion_buffer(), motion_type_wifi(0), twist_flag(0)
 {
     BSP_TSENSOR_Init();
@@ -75,7 +75,7 @@ char* DataSensor::getStdWifi() {
     return ret_std;
 }
 
-char* DataSensor::getSensorType() {
+int DataSensor::getSensorType() {
 
     int current_p = _motion_buffer_p == 0 ? MOTION_BUFFER_SIZE - 1 : _motion_buffer_p - 1;
     int prev_p = current_p == 0 ? MOTION_BUFFER_SIZE - 1 : current_p - 1;
@@ -95,36 +95,32 @@ char* DataSensor::getSensorType() {
     else if (motion_type_wifi == 4) { printf("Punch\t"); }
     else if (motion_type_wifi == 5) { printf("Right\t"); }
     else if (motion_type_wifi == 6) { printf("Left\t"); }
-    return ret_type;
+    return motion_type_wifi;
 }
 
 void DataSensor::calculateMotion() {
-    _stand = 0;     //0
-    _walk = 0;      //1
-    _run = 0;       //2
-    _raise = 0;     //3
-    _punch = 0;     //4
-    _right = 0;     //5
-    _left = 0;      //6
+    // _stand  0
+    // _walk   1
+    // _run    2
+    // _raise  3
+    // _punch  4
+    // _right  5
+    // _left   6
     
     if (stm_ang1 > 4 && (twist_flag != 1 || angle[1] > 0)) {    
         if (twist_flag == 1) {
-            _right = 1;
             motion_buffer[_motion_buffer_p] = 5;
             return;
         }
         else if (twist_flag == 2) {
-            _left = 1;
             motion_buffer[_motion_buffer_p] = 6;
             return;
         }
         if (angle[1] > 0) {
-            _right = 1;
             motion_buffer[_motion_buffer_p] = 5;
             twist_flag = 1;
         }
         else {
-            _left = 1;
             motion_buffer[_motion_buffer_p] = 6;
             twist_flag = 2;
         }
@@ -137,14 +133,11 @@ void DataSensor::calculateMotion() {
         }
     }
     
-    
     if (stm_diff < 100 && stm_all < 500) {
-        _stand = 1;
         high_flag = 0;
         motion_buffer[_motion_buffer_p] = 0;
         return;
     }
-
 
     // get the time period at diff > 1000
     if (stm_diff > 1000) {
@@ -157,37 +150,29 @@ void DataSensor::calculateMotion() {
         }
     }
 
-    // if (stm_all > 1500 && stm_diff < 1000) {
     if (stm_diff < 1000 && stm_z > 300 && stm_all > 1500) {
-        _raise = 1;
         high_flag = 1;
         motion_buffer[_motion_buffer_p] = 3;
         return;
     }
 
-
     if (stm_diff < 1000 && stm_y > 400 && high_flag != 1) {
         if (stm_z < 350) {
-            _punch = 1;
             motion_buffer[_motion_buffer_p] = 4;
             return;
         }
     }
 
-
     if (stm_diff > 1500) {
         if (high_flag_end - high_flag_start > 5) {
-            _run = 1;
             motion_buffer[_motion_buffer_p] = 2;
             return;
         }
     }
     
     if (stm_diff > 100) {
-        _walk = 1;
         motion_buffer[_motion_buffer_p] = 1;
     } else {
-        _stand = 1;
         high_flag = 0;
         motion_buffer[_motion_buffer_p] = 0;
     }
@@ -398,8 +383,8 @@ void DataSensor::stdUpdateHandler() {
     calculateMotion();
     _motion_buffer_p = (_motion_buffer_p + 1) % MOTION_BUFFER_SIZE;
 
-    xyz_sen = getSensorType();
-    printf("%s\t", xyz_sen);
+    // xyz_sen = getSensorType();
+    // printf("%s\t", xyz_sen);
     printf("%s\n", xyz_std);    // must print! (for frequency...)
 
     prev_stm_x = stm_x;

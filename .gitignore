@@ -49,3 +49,4 @@ cmake_build/
 */wifi-ism43362
 */BSP_B-L475E-IOT01
 */.hg
+*/BSP

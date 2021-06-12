@@ -47,7 +47,7 @@ public:
 
     char* getStdWifi();
 
-    char* getSensorType();
+    int getSensorType();
 
     void calculateMotion();
 
@@ -116,8 +116,6 @@ private:
     // Print Buffer
     char* ret_sen;
     char* ret_std;
-    char* ret_type;
-    // int ret_type;
     uint8_t motion_type[5];
     int motion_type_wifi;
 
@@ -126,9 +124,6 @@ private:
     int high_flag_end;
     int high_flag;
     int twist_flag;
-
-    // Motion types
-    int _stand, _walk, _run, _raise, _punch, _right, _left;
 
     // Motion buffers
     int motion_buffer[MOTION_BUFFER_SIZE];

@@ -64,36 +64,19 @@ void WifiDataSensor::startSensing() {
 void WifiDataSensor::send_sensor_data() {
     record_count++;
     xyz_std = data_sensor.getStdWifi();
-    // xyz_std = data_sensor.getSensorValueWifi();
-    // data_sensor.getSensorType();
 
-    // printf("%s\n", xyz_std);
-    // printf("%d\n", type);
+    int type = data_sensor.getSensorType();
+
     int len = 0;
 
-    len = sprintf(buffer, "%s", xyz_std);
+    // len = sprintf(buffer, "%s", mv_type);
+    len = sprintf(buffer, "type:%d", type);
 
-    // response = socket.send(buffer,len); 
-    // if (0 >= response){
-    //     printf("Error sending: %d\n", response); 
-    // }
+    response = socket.send(buffer,len); 
+    if (0 >= response){
+        printf("Error sending: %d\n", response); 
+    }
     
-
-    // if(record_count % 10 == 0) {
-    //     int len = 0;
-
-    //     len = sprintf(buffer, "%s", std_records.c_str());
-        
-    //     response = socket.send(buffer,len); 
-    //     if (0 >= response){
-    //         printf("Error seding: %d\n", response); 
-    //     }
-
-    //     std_records.clear();
-
-    // } else {
-    //     std_records += string(xyz_std);
-    // }
 }
 
 void WifiDataSensor::connectWifi() {

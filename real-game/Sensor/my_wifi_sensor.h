@@ -11,8 +11,8 @@
 #include <string>
 
 #define WIFI_IDW0XX1    2
-// #define IP_ADDRESS "172.20.10.2"
-#define IP_ADDRESS "192.168.1.254"
+#define IP_ADDRESS "172.20.10.2"
+// #define IP_ADDRESS "192.168.1.254"
 #define PORT 30006
 // #define SAMPLE_RATE
 
@@ -50,7 +50,7 @@ private:
     nsapi_error_t response;
     ISM43362Interface _wifi;
     SocketAddress a;
-    char buffer[2048];
+    char buffer[1024];
     string std_records;
     int record_count;
     char* xyz_std;
