@@ -2,8 +2,9 @@ import socket
 import re
 
 #HOST = '192.168.50.101'
-HOST = '172.20.10.2'
-PORT = 65438
+# HOST = '172.20.10.2'
+HOST = '192.168.1.254'
+PORT = 30006
 
 def GetType(ins):
     words = ins.decode("utf-8")
@@ -26,6 +27,7 @@ def GetType(ins):
 
 if __name__ == '__main__':
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind((HOST, PORT))
         s.listen()
         conn, addr = s.accept()

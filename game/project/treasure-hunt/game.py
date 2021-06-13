@@ -1,10 +1,12 @@
-import pygame
 import socket
 import json
 import threading
+import pygame
+from pynput.keyboard import Key, Controller
 
-from utils import load_sprite, print_status
-from models import Player
+from utils import load_sprite, print_status, get_random_position
+from utils import get_motion_type, get_motion_message
+from models import Player, Asteroid, Treasure
 
 
 class TreasureHunt:
@@ -14,13 +16,18 @@ class TreasureHunt:
         self.SCREEN_HEIGHT = height
         self.MIN_ASTEROID_DISTANCE = 250
         self.message = ""
+        self.asteroids = []
         self.bullets = []
+        self.treasures = []
         self.data = ""
         self.data_count = 0
         self.error_count = 0
         self.gyro_scale = 1000
         self.motion_buffer = []
         self.lock = threading.Lock()
+        self.motion_type = ''
+        self.keyboard = Controller()
+        self.treasure_count = 2
 
     def init(self):
         self._init_pygame()
@@ -36,8 +43,24 @@ class TreasureHunt:
         self.background = load_sprite("space", False)
         self.clock = pygame.time.Clock()
         self.font = pygame.font.Font(None, 64)
-        self.status_font = pygame.font.Font(None, 12)
+        self.status_font = pygame.font.Font(None, 32)
         self.player = Player((400, 300), self.bullets.append)
+        
+
+        for _ in range(3):
+            while True:
+                position = get_random_position(self.screen)
+                if (
+                    position.distance_to(self.player.position)
+                    > self.MIN_ASTEROID_DISTANCE
+                ):
+                    break
+
+            self.asteroids.append(Asteroid(position, self.asteroids.append))
+
+        for _ in range(self.treasure_count):
+            position = get_random_position(self.screen)
+            self.treasures.append(Treasure(position))
 
     def start(self):
         HOST = '192.168.1.254'
@@ -48,7 +71,7 @@ class TreasureHunt:
             # To reuse the same port for each connection
             s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             s.bind((HOST, PORT))
-            s.listen()
+            s.listen(5)
             conn, addr = s.accept()
             try:
                 with conn:
@@ -80,7 +103,7 @@ class TreasureHunt:
     def _get_wifi_data(self, conn):
         while self.playing:
             # Get data from connection
-            data = conn.recv(8192).decode('utf-8')
+            data = conn.recv(1024).decode('utf-8')
 
             # Lock buffer to prevent race condition
             with self.lock:
@@ -91,47 +114,32 @@ class TreasureHunt:
         with self.lock:
             # Parse each string from buffer
             for data in self.motion_buffer:
-                try:
-                    # data = conn.recv(8192).decode('utf-8')
-                    dec = json.JSONDecoder()
-                    pos = 0
-                    datas = []
+                motion_type = get_motion_type(data)
+                self.motion_type = motion_type
+                message = get_motion_message(motion_type)
+                self.message = message
 
-                    # decode several json objects in a single line
-                    while not pos == len(str(data)):
-                        j, json_len = dec.raw_decode(str(data)[pos:])
-                        pos += json_len
-                        datas.append(j)
-
-                    for data in datas:
-                        self.data_count += 1
-                        json_data = data
-
-                        acce_data = [json_data['ax'],
-                                     json_data['ay'],
-                                     json_data['az']]
-
-                        gyro_data = [json_data['ang0'] / self.gyro_scale,
-                                     json_data['ang1'] / self.gyro_scale,
-                                     json_data['ang2'] / self.gyro_scale]
-
-                        val = json_data['val']
-                        all = json_data['all']
-                        diff = json_data['diff']
-
-                        # # put data in the array
-                        # for i in range(3):
-                        #     acce[i].append(acce_data[i])
-                        #     gyro[i].append(gyro_data[i])
-                        message = f'{self.data_count}. ACCE -- X:{acce_data[0]}, Y:{acce_data[1]}, Z:{acce_data[2]} GYRO -- X:{gyro_data[0]}, Y:{gyro_data[1]}, Z:{gyro_data[2]}, Val: {val}, All: {all}, Diff: {diff}'
-                        # print(message)
-                        self.message = message
-                        # print(self.message)
-
-                except json.decoder.JSONDecodeError:
-                    print("JSONDecodeError!!!")
-                    print(f'data: {data}')
-                    self.error_count += 1
+                # stand
+                if motion_type == '0':
+                    self.player.set_stand()
+                # walk
+                elif motion_type == '1':
+                    self.player.set_walk()
+                # run
+                elif motion_type == '2':
+                    self.player.set_run()
+                # raise
+                elif motion_type == '3':
+                    pass
+                # punch
+                elif motion_type == '4':
+                    self.player.shoot()
+                # right
+                elif motion_type == '5':
+                    self.player.rotate(angle=15, clockwise=True)
+                # left
+                elif motion_type == '6':
+                    self.player.rotate(angle=15, clockwise=False)
 
             # Clear read buffer
             self.motion_buffer = []
@@ -170,19 +178,22 @@ class TreasureHunt:
 
         # self.message = f'POS: {self.player.get_position()}, SPEED: {self.player.get_velocity()}'
 
-        # for asteroid in self.asteroids:
-        #     if asteroid.collides_with(self.spaceship):
-        #         self.spaceship = None
-        #         self.message = "You lost!"
-        #         break
+        for asteroid in self.asteroids:
+            if asteroid.collides_with(self.player):
+                self.message = "You lost!"
+                self.playing = False
 
-        # for bullet in self.bullets[:]:
-        #     for asteroid in self.asteroids[:]:
-        #         if asteroid.collides_with(bullet):
-        #             self.asteroids.remove(asteroid)
-        #             self.bullets.remove(bullet)
-        #             asteroid.split()
-        #             break
+        for treasure in self.treasures:
+            if treasure.collides_with(self.player):
+                self.treasures.remove(treasure)
+
+        for bullet in self.bullets[:]:
+            for asteroid in self.asteroids[:]:
+                if asteroid.collides_with(bullet):
+                    self.asteroids.remove(asteroid)
+                    self.bullets.remove(bullet)
+                    asteroid.split()
+                    break
 
         for bullet in self.bullets[:]:
             if not self.screen.get_rect().collidepoint(bullet.position):
@@ -191,7 +202,7 @@ class TreasureHunt:
     def _get_game_objects(self):
         # game_objects = [*self.asteroids, *self.bullets]
 
-        game_objects = [*self.bullets, self.player]
+        game_objects = [*self.asteroids, *self.bullets, *self.treasures, self.player]
 
         return game_objects
 

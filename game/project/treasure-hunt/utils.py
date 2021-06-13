@@ -42,6 +42,11 @@ def wrap_position(position, surface, object):
 
     return Vector2(x, y)
 
+def asteroid_position(position, surface):
+    x, y = position
+    w, h = surface.get_size()
+    return Vector2(x % w, y % h)
+
 
 def get_random_position(surface):
     return Vector2(
@@ -50,8 +55,9 @@ def get_random_position(surface):
     )
 
 
-def get_random_velocity(min_speed, max_speed):
-    speed = random.randint(min_speed, max_speed)
+def get_random_velocity():
+    # speed = random.randint(min_speed, max_speed)
+    speed = random.random()
     angle = random.randrange(0, 360)
     return Vector2(speed, 0).rotate(angle)
 
@@ -72,3 +78,30 @@ def print_status(surface, text, font, color=Color("tomato")):
     rect.center = Vector2(400, 25)
 
     surface.blit(text_surface, rect)
+
+def get_motion_type(words):
+    idx = words.find(':', 0)
+    x = words[idx+1 : idx+2]
+
+    return x
+    
+
+def get_motion_message(motion_type):
+    message = ''
+    
+    if (motion_type == "0"):
+        message = 'Stand'
+    elif (motion_type == "1"):
+        message = 'Walk'
+    elif (motion_type == "2"):
+        message = 'Run'
+    elif (motion_type == "3"):
+        message = 'Raise'
+    elif (motion_type == "4"):
+        message = 'Punch'
+    elif (motion_type == "5"):
+        message = 'Right'
+    elif (motion_type == "6"):
+        message = 'Left'
+
+    return message

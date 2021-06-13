@@ -37,6 +37,7 @@ void DataSensor::start() {
     // add update event to event queue
     _event_queue.call_every(TIMESTEP, this, &DataSensor::sensorUpdateHandler);
     _event_queue.call_every(STD_TIMESTEP, this, &DataSensor::stdUpdateHandler);
+    _event_queue.call_every(CALIBRATION_CYCLE, this, &DataSensor::calibration);
 }
 
 
@@ -399,7 +400,7 @@ void DataSensor::button_release_detecting() {
 void DataSensor::button_pressed() {
     button.disable_irq();
     _event_queue.call(printf, "pressed\n");
-    press_threhold.attach(callback(this, &DataSensor::button_release_detecting), 2.0);
+    press_threhold.attach(callback(this, &DataSensor::button_release_detecting), 1.0);
     _event_queue.call(printf, "start timer...\n");
 }
 

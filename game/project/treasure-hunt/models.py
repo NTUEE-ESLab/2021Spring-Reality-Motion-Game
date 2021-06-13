@@ -1,7 +1,7 @@
 from pygame.math import Vector2
 from pygame.transform import rotozoom
 
-from utils import get_random_velocity, load_sound, load_sprite, wrap_position
+from utils import get_random_velocity, load_sound, load_sprite, wrap_position, asteroid_position
 
 UP = Vector2(0, -1)
 
@@ -33,8 +33,8 @@ class Player(GameObject):
         self.laser_sound = load_sound("laser")
         self.direction = Vector2(UP)
         self.ACCELERATION = 0.25
-        self.WALK_SPEED = 3
-        self.RUN_SPEED = 10
+        self.WALK_SPEED = 1
+        self.RUN_SPEED = 2
         self.BULLET_SPEED = 3
 
         super().__init__(position, load_sprite("spaceship"), Vector2(0))
@@ -132,8 +132,12 @@ class Asteroid(GameObject):
         sprite = rotozoom(load_sprite("asteroid"), 0, scale)
 
         super().__init__(
-            position, sprite, get_random_velocity(1, 3)
+            position, sprite, get_random_velocity()
         )
+
+    def move(self, surface):
+        self.position = asteroid_position(
+            self.position + self.velocity, surface)
 
     def split(self):
         if self.size > 1:
@@ -150,3 +154,11 @@ class Bullet(GameObject):
 
     def move(self, surface):
         self.position = self.position + self.velocity
+
+class Treasure(GameObject):
+    def __init__(self, position):
+        super().__init__(position, load_sprite("treasure"), Vector2(0))
+
+    def move(self, surface):
+        pass
+

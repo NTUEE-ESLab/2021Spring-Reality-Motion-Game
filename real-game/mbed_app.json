@@ -6,11 +6,11 @@
         },
         "wifi-ssid": {
             "help": "WiFi SSID",
-            "value": "\"melovedragons\""
+            "value": "\"CTHomegn\""
         },
         "wifi-password": {
             "help": "WiFi Password",
-            "value": "\"emily5653789\""
+            "value": "\"asetj1314\""
         },
         "wifi-tx": {
             "help": "TX pin for serial connection to external device",

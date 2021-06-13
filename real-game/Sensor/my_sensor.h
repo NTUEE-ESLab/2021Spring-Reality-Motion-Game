@@ -23,6 +23,7 @@
 #define TIMESTEP 1
 #define STD_TIMESTEP 20
 #define MOTION_BUFFER_SIZE 10
+#define CALIBRATION_CYCLE 10s
 
 extern EventQueue event_queue;
 
