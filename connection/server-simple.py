@@ -1,9 +1,8 @@
 import socket
 import re
 
-#HOST = '192.168.50.101'
-# HOST = '172.20.10.2'
-HOST = '192.168.1.254'
+HOST = '172.20.10.2'
+#HOST = '192.168.1.254'
 PORT = 30006
 
 def GetType(ins):

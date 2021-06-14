@@ -127,6 +127,8 @@ private:
     int high_flag_end;
     int high_flag;
     int twist_flag;
+    int twist_time;
+    int raise_time;
 
     // Motion buffers
     int motion_buffer[MOTION_BUFFER_SIZE];

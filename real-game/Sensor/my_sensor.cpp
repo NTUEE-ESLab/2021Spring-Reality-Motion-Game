@@ -11,7 +11,7 @@ DataSensor::DataSensor(EventQueue &event_queue) :
     AccOffset(), GyroOffset(),  pDataXYZ(), pGyroDataXYZ(),
     pGyroDataXYZ_prev(), angle(), buffer_stm(), buffer_stm_x(),
     buffer_stm_y(), buffer_stm_z(), button(USER_BUTTON), led(LED1), high_flag_start(0), high_flag_end(0), motion_type(),
-    _motion_buffer_p(0), motion_buffer(), motion_type_wifi(0), twist_flag(0)
+    _motion_buffer_p(0), motion_buffer(), motion_type_wifi(0), twist_flag(0), twist_time(0), raise_time(0)
 {
     BSP_TSENSOR_Init();
     BSP_HSENSOR_Init();
@@ -114,7 +114,41 @@ void DataSensor::calculateMotion() {
     // _right  5
     // _left   6
     
-    if (stm_ang1 > 4.5 && (twist_flag != 1 || angle[1] > 0)) {    
+    if (stm_diff < 100 && stm_all < 500) {
+        raise_time = 0;
+        high_flag = 0;
+        motion_buffer[_motion_buffer_p] = 0;
+        return;
+    }
+
+    if (stm_diff > 1000) {
+        if (high_flag_start == 0) {
+            high_flag_start = _buffer_p;
+            high_flag_end = _buffer_p;
+        }
+        else {
+            high_flag_end += 1;
+        }
+    }
+
+    if ((stm_diff < 1000 && stm_z > 300 && stm_all > 1800 )) {
+        raise_time += 1;
+        // if (raise_time < 10) {
+            high_flag = 1;
+            motion_buffer[_motion_buffer_p] = 3;
+            return;
+        // }
+    }
+
+    if (stm_diff > 1500) {
+        if (high_flag_end - high_flag_start > 5) {
+            motion_buffer[_motion_buffer_p] = 2;
+            return;
+        }
+    }
+
+    if (stm_ang1 > 4.5 && (twist_flag != 1 || angle[1] > 0) ) { 
+        twist_time += 1;   
         if (twist_flag == 1) {
             motion_buffer[_motion_buffer_p] = 5;
             return;
@@ -137,31 +171,12 @@ void DataSensor::calculateMotion() {
     if (stm_ang1 < 3.9) {
         if (twist_flag != 0) {
             twist_flag = 0;
+            twist_time = 0;
         }
     }
     
-    if (stm_diff < 100 && stm_all < 500) {
-        high_flag = 0;
-        motion_buffer[_motion_buffer_p] = 0;
-        return;
-    }
 
     // get the time period at diff > 1000
-    if (stm_diff > 1000) {
-        if (high_flag_start == 0) {
-            high_flag_start = _buffer_p;
-            high_flag_end = _buffer_p;
-        }
-        else {
-            high_flag_end += 1;
-        }
-    }
-
-    if (stm_diff < 1000 && stm_z > 300 && stm_all > 1500 || stm_ang0 > 4) {
-        high_flag = 1;
-        motion_buffer[_motion_buffer_p] = 3;
-        return;
-    }
 
     if (stm_diff < 1000 && stm_y > 400 && high_flag != 1) {
         if (stm_z < 350) {
@@ -169,17 +184,14 @@ void DataSensor::calculateMotion() {
             return;
         }
     }
-
-    if (stm_diff > 1500) {
-        if (high_flag_end - high_flag_start > 5) {
-            motion_buffer[_motion_buffer_p] = 2;
-            return;
-        }
-    }
     
     if (stm_diff > 100) {
+        if (raise_time > 20) {
+            raise_time = 0;
+        }
         motion_buffer[_motion_buffer_p] = 1;
     } else {
+        raise_time = 0;
         high_flag = 0;
         motion_buffer[_motion_buffer_p] = 0;
     }
