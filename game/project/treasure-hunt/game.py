@@ -26,6 +26,7 @@ class TreasureHunt:
         self.motion_buffer = []
         self.lock = threading.Lock()
         self.motion_type = ''
+        self.prev_motion_type = ''
         self.keyboard = Controller()
         self.treasure_count = 2
 
@@ -109,6 +110,42 @@ class TreasureHunt:
             with self.lock:
                 self.motion_buffer.append(data)
 
+    def _handle_motion_type(self):
+        # stand
+        if self.motion_type == '0':
+            self.player.set_stand()
+            self.prev_motion_type = self.motion_type
+        # walk
+        elif self.motion_type == '1':
+            self.player.set_walk()
+            self.prev_motion_type = self.motion_type
+        # run
+        elif self.motion_type == '2':
+            self.player.set_run()
+            self.prev_motion_type = self.motion_type
+        # raise
+        elif self.motion_type == '3':
+            self.prev_motion_type = self.motion_type
+        # punch
+        elif self.motion_type == '4':
+            # To prevent over shooting
+            if self.prev_motion_type != self.motion_type:
+                self.player.shoot()
+            self.prev_motion_type = self.motion_type
+        # right
+        elif self.motion_type == '5':
+            # To prevent over rotating
+            if self.prev_motion_type != self.motion_type:
+                self.player.rotate(angle=45, clockwise=True)
+            self.prev_motion_type = self.motion_type
+        # left
+        elif self.motion_type == '6':
+            # To prevent over rotating
+            if self.prev_motion_type != self.motion_type:
+                self.player.rotate(angle=45, clockwise=False)
+            self.prev_motion_type = self.motion_type
+
+
     def _handle_wifi_data(self):
         # Lock buffer to prevent race condition
         with self.lock:
@@ -119,27 +156,8 @@ class TreasureHunt:
                 message = get_motion_message(motion_type)
                 self.message = message
 
-                # stand
-                if motion_type == '0':
-                    self.player.set_stand()
-                # walk
-                elif motion_type == '1':
-                    self.player.set_walk()
-                # run
-                elif motion_type == '2':
-                    self.player.set_run()
-                # raise
-                elif motion_type == '3':
-                    pass
-                # punch
-                elif motion_type == '4':
-                    self.player.shoot()
-                # right
-                elif motion_type == '5':
-                    self.player.rotate(angle=15, clockwise=True)
-                # left
-                elif motion_type == '6':
-                    self.player.rotate(angle=15, clockwise=False)
+                # Based on the motion type
+                self._handle_motion_type()
 
             # Clear read buffer
             self.motion_buffer = []
@@ -171,6 +189,8 @@ class TreasureHunt:
             self.player.accelerate()
         elif is_key_pressed[pygame.K_DOWN]:
             self.player.decelerate()
+
+        
 
     def _process_game_logic(self):
         for game_object in self._get_game_objects():

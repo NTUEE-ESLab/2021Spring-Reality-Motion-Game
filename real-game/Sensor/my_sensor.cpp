@@ -37,7 +37,7 @@ void DataSensor::start() {
     // add update event to event queue
     _event_queue.call_every(TIMESTEP, this, &DataSensor::sensorUpdateHandler);
     _event_queue.call_every(STD_TIMESTEP, this, &DataSensor::stdUpdateHandler);
-    _event_queue.call_every(CALIBRATION_CYCLE, this, &DataSensor::calibration);
+    // _event_queue.call_every(CALIBRATION_CYCLE, this, &DataSensor::calibration);
 }
 
 
