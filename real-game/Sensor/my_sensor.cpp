@@ -37,7 +37,7 @@ void DataSensor::start() {
     // add update event to event queue
     _event_queue.call_every(TIMESTEP, this, &DataSensor::sensorUpdateHandler);
     _event_queue.call_every(STD_TIMESTEP, this, &DataSensor::stdUpdateHandler);
-    // _event_queue.call_every(CALIBRATION_CYCLE, this, &DataSensor::calibration);
+    // _event_queue.call_every(CALIBRATION_CYCLE, this, &DataSensor::recalibrate);
 }
 
 
@@ -54,6 +54,12 @@ void DataSensor::calibration() {
     normalizeSamples();
 
     printf("done!\n");
+}
+
+void DataSensor::recalibrate() {
+    if (getSensorType() == 0) {
+        calibration();
+    }
 }
 
 char* DataSensor::printSensorValue() {
@@ -108,7 +114,7 @@ void DataSensor::calculateMotion() {
     // _right  5
     // _left   6
     
-    if (stm_ang1 > 4 && (twist_flag != 1 || angle[1] > 0)) {    
+    if (stm_ang1 > 4.5 && (twist_flag != 1 || angle[1] > 0)) {    
         if (twist_flag == 1) {
             motion_buffer[_motion_buffer_p] = 5;
             return;
@@ -128,7 +134,7 @@ void DataSensor::calculateMotion() {
         return;
     } 
     
-    if (stm_ang1 < 3.5) {
+    if (stm_ang1 < 3.9) {
         if (twist_flag != 0) {
             twist_flag = 0;
         }
@@ -151,7 +157,7 @@ void DataSensor::calculateMotion() {
         }
     }
 
-    if (stm_diff < 1000 && stm_z > 300 && stm_all > 1500) {
+    if (stm_diff < 1000 && stm_z > 300 && stm_all > 1500 || stm_ang0 > 4) {
         high_flag = 1;
         motion_buffer[_motion_buffer_p] = 3;
         return;

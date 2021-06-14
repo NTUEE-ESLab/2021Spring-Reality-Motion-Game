@@ -37,6 +37,9 @@ public:
     // Calibrate the offset of the sensor
     void calibration();
 
+    // Standing calibration
+    void recalibrate();
+
     // Print the sensor data value
     char* printSensorValue();
 
