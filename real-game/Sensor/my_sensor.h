@@ -18,11 +18,11 @@
 #include "PinNames.h"
 #include <cstdint>
 
-#define SENSOR_BUFFER_SIZE 20
+#define SENSOR_BUFFER_SIZE 10
 #define SCALE_MULTIPLIER 0.045
 #define TIMESTEP 1
-#define STD_TIMESTEP 20
-#define MOTION_BUFFER_SIZE 10
+#define STD_TIMESTEP 10
+#define MOTION_BUFFER_SIZE 5
 #define CALIBRATION_CYCLE 10s
 
 extern EventQueue event_queue;
@@ -129,6 +129,8 @@ private:
     int twist_flag;
     int twist_time;
     int raise_time;
+    int right_flag;
+    int left_flag;
 
     // Motion buffers
     int motion_buffer[MOTION_BUFFER_SIZE];

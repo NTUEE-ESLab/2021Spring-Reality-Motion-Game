@@ -11,7 +11,8 @@
 #include <string>
 
 #define WIFI_IDW0XX1    2
-#define IP_ADDRESS "172.20.10.2"
+// #define IP_ADDRESS "172.20.10.2"
+#define IP_ADDRESS "192.168.50.101"
 // #define IP_ADDRESS "192.168.1.254"
 #define PORT 30006
 // #define SAMPLE_RATE
