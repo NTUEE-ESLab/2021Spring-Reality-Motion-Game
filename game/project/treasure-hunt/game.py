@@ -2,9 +2,10 @@ import socket
 import json
 import threading
 import pygame
+import time
 from pynput.keyboard import Key, Controller
 
-from utils import load_sprite, print_status, get_random_position
+from utils import load_sprite, print_text, print_status, get_random_position
 from utils import get_motion_type, get_motion_message
 from models import Player, Asteroid, Treasure
 
@@ -64,7 +65,9 @@ class TreasureHunt:
             self.treasures.append(Treasure(position))
 
     def start(self):
-        HOST = '192.168.1.254'
+        # HOST = '192.168.1.254'
+        # HOST = '172.20.10.2'
+        HOST = '192.168.50.101'
         # Port to listen on (non-privileged ports are > 1023)
         PORT = 30006
 
@@ -81,7 +84,7 @@ class TreasureHunt:
 
                     # Use another to listen data from motion sensor
                     data_thread = threading.Thread(
-                        target=self._get_wifi_data, args=[conn])
+                        target=self._get_wifi_data, args=[conn], daemon=True)
                     data_thread.start()
 
                     # Game loop
@@ -119,18 +122,20 @@ class TreasureHunt:
         elif self.motion_type == '1':
             self.player.set_walk()
             self.prev_motion_type = self.motion_type
-        # run
+        # run (to shoot)
         elif self.motion_type == '2':
-            self.player.set_run()
+#            self.player.set_run()
+            self.player.shoot()
             self.prev_motion_type = self.motion_type
-        # raise
+        # raise (to run)
         elif self.motion_type == '3':
+            # To prevent over shooting
+#            if self.prev_motion_type != self.motion_type:
+#                self.player.shoot()
+            self.player.set_run()
             self.prev_motion_type = self.motion_type
         # punch
         elif self.motion_type == '4':
-            # To prevent over shooting
-            if self.prev_motion_type != self.motion_type:
-                self.player.shoot()
             self.prev_motion_type = self.motion_type
         # right
         elif self.motion_type == '5':
@@ -219,6 +224,10 @@ class TreasureHunt:
             if not self.screen.get_rect().collidepoint(bullet.position):
                 self.bullets.remove(bullet)
 
+        if not self.treasures:
+            self.message = "You won!"
+            self.playing = False
+
     def _get_game_objects(self):
         # game_objects = [*self.asteroids, *self.bullets]
 
@@ -233,8 +242,13 @@ class TreasureHunt:
             game_object.draw(self.screen)
 
         if self.message:
-            print_status(self.screen, self.message, self.status_font)
+            if self.playing:            
+                print_status(self.screen, self.message, self.status_font)
+            else:
+                print_text(self.screen, self.message, self.font)
 
         pygame.display.flip()
 
         self.clock.tick(60)
+        if not self.playing:
+            time.sleep(3)

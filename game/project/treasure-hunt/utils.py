@@ -26,21 +26,22 @@ def wrap_position(position, surface, object):
     w, h = surface.get_size()
     r = object.get_radius()
 
-    if x < r:
-        x = r
-        object.set_stand()
-    elif x > (w - r):
-        x = w - r
-        object.set_stand()
-
-    if y < r:
-        y = r
-        object.set_stand()
-    elif y > (h - r):
-        y = h - r
-        object.set_stand()
-
-    return Vector2(x, y)
+#    if x < r:
+#        x = r
+#        object.set_stand()
+#    elif x > (w - r):
+#        x = w - r
+#        object.set_stand()
+#
+#    if y < r:
+#        y = r
+#        object.set_stand()
+#    elif y > (h - r):
+#        y = h - r
+#        object.set_stand()
+#
+#    return Vector2(x, y)
+    return Vector2(x % w, y % h)
 
 def asteroid_position(position, surface):
     x, y = position
