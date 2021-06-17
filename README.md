@@ -70,3 +70,6 @@ https://docs.google.com/presentation/d/1QpmcDUexZokhLhzRx4198VfW1-WgqPi4YffoX4_m
 - Right and left lags more
 - Wifi send motion type to server (server-simple.py)
 - Demo video: https://youtu.be/QfCRsLYa2cc
+
+### Final Project Demo
+https://youtu.be/kcvfzlNczBo
