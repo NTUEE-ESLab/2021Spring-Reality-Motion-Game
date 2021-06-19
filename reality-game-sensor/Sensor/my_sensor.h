@@ -18,6 +18,7 @@
 #include "PinNames.h"
 #include <cstdint>
 
+// Sensor parameters
 #define SENSOR_BUFFER_SIZE 10
 #define SCALE_MULTIPLIER 0.045
 #define TIMESTEP 1
@@ -32,6 +33,7 @@ public:
     // Constructor
     DataSensor(EventQueue &event_queue);
 
+    // Start sensing data
     void start();
 
     // Calibrate the offset of the sensor
@@ -46,6 +48,7 @@ public:
     // Print standard value
     char* printStd();
 
+    // Get raw sensor value (a json formatted string)
     char* getSensorValueWifi();
 
     char* getStdWifi();

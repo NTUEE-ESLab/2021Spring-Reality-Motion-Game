@@ -79,6 +79,7 @@ void WifiDataSensor::send_sensor_data() {
     
 }
 
+
 void WifiDataSensor::connectWifi() {
     int ret = _wifi.connect(MBED_CONF_APP_WIFI_SSID, MBED_CONF_APP_WIFI_PASSWORD, NSAPI_SECURITY_WPA_WPA2); 
     
@@ -95,7 +96,7 @@ void WifiDataSensor::connectHost() {
     NetworkInterface *net = &_wifi;
     printf("Sending data to host computer...\n");
 
-    // Open a socket on the network interface, and create a TCP connection to //www.arm.com
+    // Open a socket on the network interface
     socket.open(net); 
     if(!a.set_ip_address(IP_ADDRESS)) {
         printf("Set IP address failed");

@@ -1,3 +1,15 @@
+/* 
+ * The entry point for compiling our sensor class.
+ * 
+ * By uncommenting those header files, you can use classes provided in them.
+ * 
+ * The architecture contains several threads. A special one is the event thread that dispatch events.
+ * The process logic is divided into 3 threads: sensor, motion, and wifi
+ *  - The sensor thread will register a event that get data from the real world. (1ms)
+ *  - The motion thread determine the user motion type based on the sensor data in the buffer. (10ms)
+ *  - The wifi thread send motion type data to the game server for further processing. (100ms)
+ */
+
 #include "Callback.h"
 #include "mbed.h"
 #include <cstdio>
