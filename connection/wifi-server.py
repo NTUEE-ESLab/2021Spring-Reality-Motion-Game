@@ -2,29 +2,19 @@
 
 import socket
 import json
-import numpy
-import time
-import sys
-import os
 from datetime import datetime
 import matplotlib.pyplot as plt
-
-from utils import check_dir, get_time, save_fig
-
 
 def main():
     fig, axes = plt.subplots(nrows=3, ncols=2, sharex=True,
                              sharey=True, figsize=(16, 8))
 
-    # HOST = '127.0.0.1'  # Standard loopback interface address (localhost)
     HOST = '192.168.50.252'
     PORT = 30007       # Port to listen on (non-privileged ports are > 1023)
     acce = [[] for _ in range(3)]
     gyro = [[] for _ in range(3)]
     acce_colors = ['r', 'g', 'b']
     gyro_colors = ['c', 'm', 'y']
-    acce_labels = ['a_x', 'a_y', 'a_z']
-    gyro_labels = ['g_x', 'g_y', 'g_z']
     axis = ['X', 'Y', 'Z']
     array_s = []
     data_count = 0
@@ -33,11 +23,10 @@ def main():
     threshold = True
     init_flag = True
     count_flag = False
-    check_dir('data')
-    check_dir('image')
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        # s.setsockopt(socket.SOL_SOCKET, socket.REUSEADDR, 1)
+        # To reuse the same port for each connection
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind((HOST, PORT))
         s.listen()
         conn, addr = s.accept()
@@ -88,7 +77,6 @@ def main():
                             data_count += 1
                             file.write(json.dumps(data) + '\n')
                             json_data = data
-                            # json_data = json.loads(data)
                             array_s.append(json_data['s'] * sample_rate)
                             acce_data = [json_data['a_x'],
                                          json_data['a_y'], json_data['a_z']]

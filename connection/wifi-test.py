@@ -1,26 +1,18 @@
 #!/usr/bin/env python3
 
+"""
+    This is a simple wifi test program that 
+"""
+
 import socket
 import json
-import numpy
-import time
-import sys
-import os
 
 
 def main():
 
-    # HOST = '127.0.0.1'  # Standard loopback interface address (localhost)
     HOST = '192.168.1.254'
     PORT = 30006       # Port to listen on (non-privileged ports are > 1023)
-    acce = [[] for _ in range(3)]
-    gyro = [[] for _ in range(3)]
 
-    acce_labels = ['ax', 'ay', 'az']
-    gyro_labels = ['gx', 'gy', 'gz']
-    axis = ['X', 'Y', 'Z']
-    array_s = []
-    sample_rate = 0.1
     data_count = 0
     error_count = 0
     gyro_scale = 1000
@@ -63,10 +55,6 @@ def main():
                             all = json_data['all']
                             diff = json_data['diff']
 
-                            # # put data in the array
-                            # for i in range(3):
-                            #     acce[i].append(acce_data[i])
-                            #     gyro[i].append(gyro_data[i])
                             print(
                                 f'{data_count}. ACCE -- X:{acce_data[0]}, Y:{acce_data[1]}, Z:{acce_data[2]} GYRO -- X:{gyro_data[0]}, Y:{gyro_data[1]}, Z:{gyro_data[2]}, Val: {val}, All: {all}, Diff: {diff}')
 
