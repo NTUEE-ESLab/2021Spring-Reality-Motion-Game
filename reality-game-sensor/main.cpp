@@ -24,16 +24,23 @@ Thread event_thread;
 int main() 
 {
     /* Wifi Data Sensor */
+
+    // Declare a  new wifi sensor instance
     WifiDataSensor* wifi_sensor = new WifiDataSensor(event_queue);
     
+    // Start event dispatch
     event_thread.start(callback(&event_queue, &EventQueue::dispatch_forever));
 
+    // Start sensor sensing
     sensor_thread.start(callback(wifi_sensor, &WifiDataSensor::startSensing));
 
+    // Connect to wifi
     wifi_sensor->connectWifi();
 
+    // Connect to host computer
     wifi_sensor->connectHost();
 
+    // Start sending data to host computer
     wifi_sensor->start();
 
     /* BLE Tag */
