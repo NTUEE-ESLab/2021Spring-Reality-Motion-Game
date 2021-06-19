@@ -30,5 +30,6 @@
 - [Progress Report](https://docs.google.com/presentation/d/1QpmcDUexZokhLhzRx4198VfW1-WgqPi4YffoX4_mxNY/edit?usp=sharing)
 
 ### Demo
+[![Quick demo video](http://img.youtube.com/vi/3e2XkRUkQSk/0.jpg)](http://www.youtube.com/watch?v=3e2XkRUkQSk "Quick Demo")
 ![Quick demo video](https://youtu.be/3e2XkRUkQSk)
 ![Final Project Demo](https://youtu.be/kcvfzlNczBo)
