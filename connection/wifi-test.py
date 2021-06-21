@@ -1,9 +1,4 @@
 #!/usr/bin/env python3
-
-"""
-    This is a simple wifi test program that 
-"""
-
 import socket
 import json
 
