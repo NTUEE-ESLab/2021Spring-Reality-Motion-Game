@@ -1,5 +1,4 @@
 import socket
-import json
 import threading
 import pygame
 import time
@@ -11,6 +10,19 @@ from models import Player, Asteroid, Treasure
 
 
 class TreasureHunt:
+    """
+    The treasure hunt game class.
+
+    The game is divided into 4 phases:
+        - handle wifi data
+        - handle input
+        - process game logic
+        - draw
+
+    We create an additional worker thread for listening data from the sensor to prevent blocking call.
+
+    When the game start, it will first wait for connection from the sensor then pop up the game window.
+    """
     def __init__(self, width=800, height=600):
         self.playing = True
         self.SCREEN_WIDTH = width
@@ -32,14 +44,17 @@ class TreasureHunt:
         self.treasure_count = 2
 
     def init(self):
+        """Initialized game settings."""
         self._init_pygame()
         self._init_game_setup()
 
     def _init_pygame(self):
+        """Initialized pygame object."""
         pygame.init()
         pygame.display.set_caption("Treasure Hunt")
 
     def _init_game_setup(self):
+        """Set up initial game parameters and objects."""
         self.screen = pygame.display.set_mode(
             (self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
         self.background = load_sprite("space", False)
@@ -48,7 +63,7 @@ class TreasureHunt:
         self.status_font = pygame.font.Font(None, 32)
         self.player = Player((400, 300), self.bullets.append)
         
-
+        # Render asteroid objects
         for _ in range(3):
             while True:
                 position = get_random_position(self.screen)
@@ -60,11 +75,13 @@ class TreasureHunt:
 
             self.asteroids.append(Asteroid(position, self.asteroids.append))
 
+        # Render treasure objects
         for _ in range(self.treasure_count):
             position = get_random_position(self.screen)
             self.treasures.append(Treasure(position))
 
     def start(self):
+        """The entry point of the game."""
         # HOST = '192.168.1.254'
         # HOST = '172.20.10.2'
         HOST = '192.168.50.101'
@@ -88,16 +105,13 @@ class TreasureHunt:
                     data_thread.start()
 
                     # Game loop
-                    # game_thread = threading.Thread(target=self.main_loop)
-                    # game_thread.start()
                     self.main_loop()
 
             except KeyboardInterrupt:
-                print('Interrupted')
-                s.close()
-                print(f"error_count = {self.error_count}")
+                print('Interrupted from keyboard!')
 
     def main_loop(self):
+        """The game loop."""
         while self.playing:
             self._handle_wifi_data()
             self._handle_input()
@@ -105,6 +119,7 @@ class TreasureHunt:
             self._draw()
 
     def _get_wifi_data(self, conn):
+        """Wait for wifi data from the sensor."""
         while self.playing:
             # Get data from connection
             data = conn.recv(1024).decode('utf-8')
@@ -114,6 +129,7 @@ class TreasureHunt:
                 self.motion_buffer.append(data)
 
     def _handle_motion_type(self):
+        """Perform action based on differect motion types."""
         # stand
         if self.motion_type == '0':
             self.player.set_stand()
@@ -124,14 +140,10 @@ class TreasureHunt:
             self.prev_motion_type = self.motion_type
         # run (to shoot)
         elif self.motion_type == '2':
-#            self.player.set_run()
             self.player.shoot()
             self.prev_motion_type = self.motion_type
         # raise (to run)
         elif self.motion_type == '3':
-            # To prevent over shooting
-#            if self.prev_motion_type != self.motion_type:
-#                self.player.shoot()
             self.player.set_run()
             self.prev_motion_type = self.motion_type
         # punch
@@ -152,28 +164,30 @@ class TreasureHunt:
 
 
     def _handle_wifi_data(self):
+        """Process data came from the sensor."""
         # Lock buffer to prevent race condition
         with self.lock:
             # Parse each string from buffer
             for data in self.motion_buffer:
+                # Determine motion type
                 motion_type = get_motion_type(data)
                 self.motion_type = motion_type
                 message = get_motion_message(motion_type)
                 self.message = message
 
-                # Based on the motion type
+                # Based on the motion type, do the corresponding action
                 self._handle_motion_type()
 
             # Clear read buffer
             self.motion_buffer = []
 
     def _handle_input(self):
+        """Handle keyboard input (esc) or quit signal."""
         for event in pygame.event.get():
             if event.type == pygame.QUIT or (
                 event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE
             ):
                 self.playing = False
-                # quit()
 
             elif (
                 event.type == pygame.KEYDOWN
@@ -183,6 +197,7 @@ class TreasureHunt:
 
         is_key_pressed = pygame.key.get_pressed()
 
+        # Default key pressed set, for debug purpose
         # Handle rotation
         if is_key_pressed[pygame.K_RIGHT]:
             self.player.rotate(clockwise=True)
@@ -198,20 +213,24 @@ class TreasureHunt:
         
 
     def _process_game_logic(self):
+        """Calculate position, velocity, and collision for game objects."""
+
+        # Move objects
         for game_object in self._get_game_objects():
             game_object.move(self.screen)
 
-        # self.message = f'POS: {self.player.get_position()}, SPEED: {self.player.get_velocity()}'
-
+        # Detect collision between asteroids and player
         for asteroid in self.asteroids:
             if asteroid.collides_with(self.player):
                 self.message = "You lost!"
                 self.playing = False
 
+        # Detect collision between treastures and player
         for treasure in self.treasures:
             if treasure.collides_with(self.player):
                 self.treasures.remove(treasure)
 
+        # Detect collision between asteroids and bullets
         for bullet in self.bullets[:]:
             for asteroid in self.asteroids[:]:
                 if asteroid.collides_with(bullet):
@@ -220,22 +239,24 @@ class TreasureHunt:
                     asteroid.split()
                     break
 
+        # Detect collision between bullets and boundary
         for bullet in self.bullets[:]:
             if not self.screen.get_rect().collidepoint(bullet.position):
                 self.bullets.remove(bullet)
 
+        # If no left treasures to collect, then the player wins
         if not self.treasures:
             self.message = "You won!"
             self.playing = False
 
     def _get_game_objects(self):
-        # game_objects = [*self.asteroids, *self.bullets]
-
+        """Get the list contains all game objects."""
         game_objects = [*self.asteroids, *self.bullets, *self.treasures, self.player]
 
         return game_objects
 
     def _draw(self):
+        """Draw all game objects on the screen."""
         self.screen.blit(self.background, (0, 0))
 
         for game_object in self._get_game_objects():

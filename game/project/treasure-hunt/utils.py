@@ -7,6 +7,7 @@ from pygame.mixer import Sound
 
 
 def load_sprite(name, with_alpha=True):
+    """Load sprites by given name"""
     path = f"assets/sprites/{name}.png"
     loaded_sprite = load(path)
 
@@ -17,11 +18,19 @@ def load_sprite(name, with_alpha=True):
 
 
 def load_sound(name):
+    """Load sound by given name"""
     path = f"assets/sounds/{name}.wav"
     return Sound(path)
 
 
 def wrap_position(position, surface, object):
+    """
+    Determine the next position for an object.
+    There are two mode: 
+        - One is the object will be constrained in a container.
+        - The other one is the object will perform mod operation to 
+          go to the opposite side of the screen.
+    """
     x, y = position
     w, h = surface.get_size()
     r = object.get_radius()
@@ -44,12 +53,14 @@ def wrap_position(position, surface, object):
     return Vector2(x % w, y % h)
 
 def asteroid_position(position, surface):
+    """The position of the asteroid objects"""
     x, y = position
     w, h = surface.get_size()
     return Vector2(x % w, y % h)
 
 
 def get_random_position(surface):
+    """Get random position among the screen area"""
     return Vector2(
         random.randrange(surface.get_width()),
         random.randrange(surface.get_height()),
@@ -57,6 +68,7 @@ def get_random_position(surface):
 
 
 def get_random_velocity():
+    """Get velocity from 0 to 1 pixel randomly"""
     # speed = random.randint(min_speed, max_speed)
     speed = random.random()
     angle = random.randrange(0, 360)
@@ -64,6 +76,7 @@ def get_random_velocity():
 
 
 def print_text(surface, text, font, color=Color("tomato")):
+    """Print the win or lose message on the screen"""
     text_surface = font.render(text, True, color)
 
     rect = text_surface.get_rect()
@@ -73,6 +86,7 @@ def print_text(surface, text, font, color=Color("tomato")):
 
 
 def print_status(surface, text, font, color=Color("tomato")):
+    """Print the motion status on the screen"""
     text_surface = font.render(text, True, color)
 
     rect = text_surface.get_rect()
@@ -81,6 +95,7 @@ def print_status(surface, text, font, color=Color("tomato")):
     surface.blit(text_surface, rect)
 
 def get_motion_type(words):
+    """Parse motion type message from the sensor"""
     idx = words.find(':', 0)
     x = words[idx+1 : idx+2]
 
@@ -88,6 +103,7 @@ def get_motion_type(words):
     
 
 def get_motion_message(motion_type):
+    """Translate motion type to corresponding motion message"""
     message = ''
     
     if (motion_type == "0"):
