@@ -21,7 +21,7 @@
 // #include "my_ble_tag.h"
 // #include "my_ble_sensor.h"
 
-// handle console ouput
+// handle console output
 static BufferedSerial serial_port(USBTX, USBRX);
 FileHandle *mbed::mbed_override_console(int fd)
 {
