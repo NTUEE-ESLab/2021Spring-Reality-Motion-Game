@@ -26,9 +26,7 @@ DataSensor::DataSensor(EventQueue &event_queue) :
 }
 
 void DataSensor::start() {
-    // The 'rise' handler will execute in IRQ context 
     button.rise(callback(this, &DataSensor::button_released));
-    // The 'fall' handler will execute in the context of thread 't' 
     button.fall(callback(this, &DataSensor::button_pressed));
 
     // first time calibration
@@ -37,7 +35,6 @@ void DataSensor::start() {
     // add update event to event queue
     _event_queue.call_every(TIMESTEP, this, &DataSensor::sensorUpdateHandler);
     _event_queue.call_every(STD_TIMESTEP, this, &DataSensor::stdUpdateHandler);
-    // _event_queue.call_every(CALIBRATION_CYCLE, this, &DataSensor::recalibrate);
 }
 
 
@@ -227,18 +224,6 @@ void DataSensor::calculateMotion() {
     return;
 }
 
-uint8_t* DataSensor::getSensorTypeBLE() {
-    updateMotionType();
-    return motion_type;
-}
-
-void DataSensor::updateMotionType() {
-    motion_type[0] = 0;
-    motion_type[1] = 1;
-    motion_type[2] = 0;
-    motion_type[3] = 1;
-}
-
 void DataSensor::updateStmStd() {
     stm_x = getStd(buffer_stm_x);
     stm_y = getStd(buffer_stm_y);
@@ -247,16 +232,6 @@ void DataSensor::updateStmStd() {
     stm_ang0 = getStd(buffer_ang0);
     stm_ang1 = getStd(buffer_ang1);
     stm_ang2 = getStd(buffer_ang2);
-}
-
-void DataSensor::fillBLEArr() {
-    bleArr[0] = stm_x;
-    bleArr[1] = stm_y;
-    bleArr[2] = stm_z;
-    bleArr[3] = stm_val;
-    bleArr[4] = angle[0];
-    bleArr[5] = angle[1];
-    bleArr[6] = angle[2];
 }
 
 void DataSensor::emptyCalibrationArrays() {
