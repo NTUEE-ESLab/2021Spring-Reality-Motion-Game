@@ -4,14 +4,7 @@
 // https://docs.microsoft.com/zh-tw/cpp/cpp/class-templates?view=msvc-160
 // https://stackoverflow.com/questions/54095888/cant-use-override-in-function-c
 
-/*
- * event_id -- read only
- * event_level -- read only
- * event_item -- read, write only
- * event_challenger -- read, write only
- * event_sign_in (button) -- notify only
- * event_signal (led) -- write only
- */
+
 
 /* Public */
 RealGameTaggingService::RealGameTaggingService() :
@@ -64,7 +57,6 @@ void RealGameTaggingService::start(BLE &ble, EventQueue &event_queue)
     _button.rise(Callback<void()>(this, &RealGameTaggingService::button_released));
 }
 
-/* Private */
 void RealGameTaggingService::updateButtonState(bool newState) 
 {
     ble_error_t err = _event_sign_in.set(*_server, newState);
@@ -76,13 +68,11 @@ void RealGameTaggingService::updateButtonState(bool newState)
 
 void RealGameTaggingService::button_pressed(void) 
 {
-    // updateButtonState(true);
     _event_queue->call(this, &RealGameTaggingService::updateButtonState, true);
 }
 
 void RealGameTaggingService::button_released(void) 
 {
-    // updateButtonState(false);
     _event_queue->call(this, &RealGameTaggingService::updateButtonState, false);
 }
 

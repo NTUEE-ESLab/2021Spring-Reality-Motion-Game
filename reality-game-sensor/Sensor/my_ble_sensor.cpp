@@ -1,8 +1,6 @@
 #include "my_ble_sensor.h"
 #include <cstdint>
 
-/* Public */
-
 void BLEDataSensor::startSensing() {
     data_sensor.start();
 }
@@ -36,16 +34,8 @@ void BLEDataSensor::start(BLE &ble, EventQueue &event_queue)
 }
 
 void BLEDataSensor::updateMotionStatus() {
-    uint8_t* status = data_sensor.getSensorTypeBLE();
-    _motion[0] = status[0];
-    _motion[1] = status[1];
-    _motion[2] = status[2];
-    _motion[3] = status[3];
-
-    _motion_char.set(*_server, _motion);
+    return;
 }
-
-
 
 void BLEDataSensor::onDataSent(const GattDataSentCallbackParams &params) 
 {

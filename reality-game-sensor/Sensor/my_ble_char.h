@@ -1,3 +1,14 @@
+/*
+ * This file contains several BLE characteristics template:
+ *   - GeneralCharacteristic
+ *   - ReadOnlyCharacteristic
+ *   - WriteOnlyCharacteristic
+ *   - ReadWriteOnlyCharacteristic
+ *   - NotifyOnlyCharacteristic
+ *   - ReadWriteNotifyCharacteristic
+ *   - ReadWriteNotifyIndicateCharacteristic
+ */
+
 #ifndef __MY_BLE_CHAR_H
 #define __MY_BLE_CHAR_H
 
@@ -16,7 +27,7 @@
 #include <functional>
 
 /**
- * Read, Write, Notify, Indicate  Characteristic declaration helper.
+ * General Characteristic declaration helper. It is the parent of other characteristic classes.
  *
  * @tparam T type of data held by the characteristic.
  */
@@ -24,8 +35,7 @@ template<typename T>
 class GeneralCharacteristic : public GattCharacteristic {
 public:
     /**
-     * Construct a characteristic that can be read or written and emit
-     * notification or indication.
+     * Construct a characteristic that has no characteristic properties.
      *
      * @param[in] uuid The UUID of the characteristic.
      * @param[in] initial_value Initial value contained by the characteristic.

@@ -1,3 +1,9 @@
+/* 
+ * A BLE wrapper class for motion data sensor.
+ *
+ * [Warning!] This class is incomplete. Be careful before using this class.
+ */
+
 #ifndef __MY_BLE_SENSOR_H
 #define __MY_BLE_SENSOR_H
 
@@ -9,6 +15,11 @@ using namespace std::literals::chrono_literals;
 
 /**
  * ReadOnlyMotion Characteristic declaration helper.
+ * 
+ * The motion has default length of 5 (uint8_t).
+ * 
+ * [Warning!] This class may be incompatible with the data sensor.
+ * Pay attention to modify some of the value before using it.
  *
  * @tparam T type of data held by the characteristic.
  */
@@ -16,12 +27,11 @@ template<typename T>
 class ReadOnlyMotionCharacteristic : public GattCharacteristic {
 public:
     /**
-        * Construct a characteristic that can be read or written and emit
-        * notification or indication.
-        *
-        * @param[in] uuid The UUID of the characteristic.
-        * @param[in] initial_value Initial value contained by the characteristic.
-        */
+     * Construct a characteristic that is used to manipulate motion value.
+     *
+     * @param[in] uuid The UUID of the characteristic.
+     * @param[in] initial_value Initial value contained by the characteristic.
+     */
     ReadOnlyMotionCharacteristic(const UUID & uuid, const T& initial_value) :
         GattCharacteristic(
             /* UUID */ uuid,
@@ -37,14 +47,14 @@ public:
     }
 
     /**
-        * Get the value of this characteristic.
-        *
-        * @param[in] server GattServer instance that contain the characteristic
-        * value.
-        * @param[in] dst Variable that will receive the characteristic value.
-        *
-        * @return BLE_ERROR_NONE in case of success or an appropriate error code.
-        */
+     * Get the value of this characteristic.
+     *
+     * @param[in] server GattServer instance that contain the characteristic
+     * value.
+     * @param[in] dst Variable that will receive the characteristic value.
+     *
+     * @return BLE_ERROR_NONE in case of success or an appropriate error code.
+     */
     ble_error_t get(GattServer &server, T& dst) const
     {
         uint16_t value_length = sizeof(dst);
@@ -52,13 +62,13 @@ public:
     }
 
     /**
-        * Assign a new value to this characteristic.
-        *
-        * @param[in] server GattServer instance that will receive the new value.
-        * @param[in] value The new value to set.
-        * @param[in] local_only Flag that determine if the change should be kept
-        * locally or forwarded to subscribed clients.
-        */
+     * Assign a new value to this characteristic.
+     *
+     * @param[in] server GattServer instance that will receive the new value.
+     * @param[in] value The new value to set.
+     * @param[in] local_only Flag that determine if the change should be kept
+     * locally or forwarded to subscribed clients.
+     */
     ble_error_t set(GattServer &server, const uint8_t* value, bool local_only = false) const
     {
         return server.write(getValueHandle(), value, 5, local_only);
@@ -84,10 +94,21 @@ public:
         _motion_characteristics[0] = &_motion_char;
     }
 
+    /*
+     * Start the BLE service.
+     */
     void start(BLE &ble, events::EventQueue &event_queue);
 
+    /*
+     * Start the inner data sensor.
+     */
     void startSensing();
 
+    /*
+     * Get motion type from data sensor.
+     * 
+     * [Warning!] This method is not implemented. You can reference wifi counterpart for more information.
+     */
     void updateMotionStatus();
 
     /* GattServer::EventHandler */
@@ -137,10 +158,11 @@ private:
 
     uint8_t _motion[5] = "ABCD";
 
-    // event service and characteristic
+    // Event service and characteristic
     GattService _motion_service;
     GattCharacteristic* _motion_characteristics[1];
 
+    // Motion characteristic
     ReadOnlyMotionCharacteristic<uint8_t> _motion_char;
 };
 
