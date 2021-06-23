@@ -82,9 +82,6 @@ private:
     double prev_buffer_x;
     double prev_buffer_y;
     double prev_buffer_z;
-    double prev_stm_x;
-    double prev_stm_y;
-    double prev_stm_z;
     double stm_diff;
     double stm_all;
 
@@ -92,7 +89,6 @@ private:
     double stm_x;
     double stm_y;
     double stm_z;
-    double stm_val;
     double stm_ang0;
     double stm_ang1;
     double stm_ang2;
@@ -115,8 +111,6 @@ private:
     int twist_flag;
     int twist_time;
     int raise_time;
-    int right_flag;
-    int left_flag;
 
     // Motion buffers
     int motion_buffer[MOTION_BUFFER_SIZE];
@@ -133,11 +127,6 @@ private:
      * This methods calculate the current offset of the sensor.
      */
     void calibration();
-
-    /* 
-     * Recalibrate the sensor.
-     */
-    void recalibrate();
 
     /* 
      * Print the raw data including acce and gyro.
