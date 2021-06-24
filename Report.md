@@ -60,8 +60,8 @@ To avoid glitches in the raw data, we used a sliding window technique to acquire
 + `stm_x/stm_y/stm_z`: Standard deviation values every 10 ms.
 + `stm_diff`: Amplitude difference between milliseconds.
 + `stm_all`: Amplitude of each milliseconds.
-![Sliding Window](./images/data-buffer.png)
-<img src='./images/data-buffer.png' alt='Sliding Window' width='200'/>
+
+<img src='./images/data-buffer.png' alt='Sliding Window' width='600'/>
 
 As for the gyroscope, we used Riemann sum in place of integration to convert the angular velocity to angles.
    ```
@@ -72,13 +72,14 @@ Like the accelerometer, we kept the difference of angles compared to the previou
 #### 2. Motion Identification
 **Preliminary Motions**
 In this project, seven motion types are identified: `Stand`, `Walk`, `Run`, `Left twist`, `Right twist`, `Punch` and `Raise hand`.
-![Motion Types](./images/motion-types.png)
+<img src='./images/motion-types.png' alt='Motion Types' width='600'/>
 The difference `stm_diff` serves as an index to distinguish between motions of different frequencies. The smallest value corresponds to standing, while the largest value is further evaluated for its continual time period -- if the value exceeds a threshold for a longer period of time, we classified it as running. For the rest of the movements, we looked at its `stm_y` and `stm_z` for its main axis of activity. Motions with a larger `stm_y` resembles punching, those with a larger `stm_z` resembles raising hands, and those with moderate values in both directions resembles walking.
 As for wrist twisting, we looked at the absolute value of `stm_angle` in the y direction, since this value is dominant only in the wrist twisting movements. The sign of such value helps us decide the direction of twists.
 
 **Motion Refinement**
 After acquiring the motion types with above algorithm, we found that there were some glitches while we were performing the same movement. To eliminate such inconsistency, we added another window similar than that mentioned in the sliding window technique. The preliminary motions are computed every 10 ms and stored in a buffer. Every 100 ms, a final motion type is generated from the past 10 buffer values. This way, the motion types are more consecutive, and the data transmission rate is also closer to what is desired.
-![Data Collection Events](./images/data-event.png)
+
+<img src='./images/data-event.png' alt='Data Collection Events' width='600'/>
 
 ### IV. Location Service
 
