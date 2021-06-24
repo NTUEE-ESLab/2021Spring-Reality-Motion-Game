@@ -5,8 +5,7 @@
 - 陳映樵 B07901
 - 吳宜庭 B07901095
 
-Outline
-===
+## Outline
 - [Abstract](#abstract)
 - [Motivation](#motivation)
 - [Implementation](#implementation)
@@ -27,13 +26,11 @@ Outline
 ## Abstract
 In this project, we have created an archaic treasure hunting game played with motion control. We integrated several sensors in STM32 board with our own motion detection algorithm, object class wrapper and multi-threading technique for realization.
 
-Motivation
-===
+## Motivation
 We started from the idea of building a reality game in which players can trigger different tasks based on their locations and complete the tasks by performing some specified movements. 
 
 
-Implementation
-===
+## Implementation
 
 ### I. System Architecture
 ![Project Architecture](./images/architecture.png)
@@ -56,8 +53,8 @@ We write out game program based on a spaceship shooting game from the web. The p
 ### V. Game Design
 
 
-Setup & Usage
-===
+## Setup & Usage
+
 ### Board side (mbed compiler)
 - Configure the Wi-Fi shield to use.
 
@@ -84,16 +81,13 @@ Setup & Usage
 
 
 
-Progress
-===
+## Progress
 - [MidProposal](https://docs.google.com/presentation/d/1zUISQAgCSKkXEW6G_4c_JL1AxVgvxVhpq2gYIAT18C8/edit?usp=sharing)
 - [Progress Report](https://docs.google.com/presentation/d/1QpmcDUexZokhLhzRx4198VfW1-WgqPi4YffoX4_mxNY/edit?usp=sharing)
 
-Demo
-===
+## Demo
 ### Final Project Demo
 [![Final Project Demo](http://img.youtube.com/vi/kcvfzlNczBo/0.jpg)](http://www.youtube.com/watch?v=kcvfzlNczBo "Final Demo")
 
-References
-===
+## References
 - 
