@@ -52,16 +52,19 @@ We write out game program based on a spaceship shooting game from the web. The p
 ### III. Motion Detection
 
 #### 1. Data Collection
+
 **Calibration**
+
 Right after the `DataSensor::start()`, we call `calibration()` to collect the first 1000 sensor data samples within a second. We take the mean of these samples as the offsets. All the following sensor values will be subtracted by the offsets.
 
 **Sliding Window**
+
 To avoid glitches in the raw data, we used a sliding window technique to acquire the data. For the accelerometer, we recorded the sensor data every 1 ms and store it in a buffer of size 10. We calculated the standard deviation of 10 consecutive buffer values every 10 ms. Larger standard deviation means that there is more motion in that direction. In the meantime, we also calculated the difference of sensor value each millisecond compared to the previous millisecond. This allowed us to easily differentiate between motions of different frequencies. The amplitude value was also recorded.
 + `stm_x/stm_y/stm_z`: Standard deviation values every 10 ms.
 + `stm_diff`: Amplitude difference between milliseconds.
 + `stm_all`: Amplitude of each milliseconds.
 
-<img src='./images/data-buffer.png' alt='Sliding Window' width='750' align='center'/>
+<img src='./images/data-buffer.png' alt='Sliding Window' width='650'/>
 
 As for the gyroscope, we used Riemann sum in place of integration to convert the angular velocity to angles.
    ```
@@ -70,7 +73,9 @@ As for the gyroscope, we used Riemann sum in place of integration to convert the
 Like the accelerometer, we kept the difference of angles compared to the previous millisecond in a buffer and calculated its standard deviation every 10 ms (`stm_angle`).
 
 #### 2. Motion Identification
+
 **Preliminary Motions**
+
 In this project, seven motion types are identified: `Stand`, `Walk`, `Run`, `Left twist`, `Right twist`, `Punch` and `Raise hand`.
 
 <img src='./images/motion-types.png' alt='Motion Types' width='600' align='center'/>
@@ -79,6 +84,7 @@ The difference `stm_diff` serves as an index to distinguish between motions of d
 As for wrist twisting, we looked at the absolute value of `stm_angle` in the y direction, since this value is dominant only in the wrist twisting movements. The sign of such value helps us decide the direction of twists.
 
 **Motion Refinement**
+
 After acquiring the motion types with above algorithm, we found that there were some glitches while we were performing the same movement. To eliminate such inconsistency, we added another window similar than that mentioned in the sliding window technique. The preliminary motions are computed every 10 ms and stored in a buffer. Every 100 ms, a final motion type is generated from the past 10 buffer values. This way, the motion types are more consecutive, and the data transmission rate is also closer to what is desired.
 
 <img src='./images/data-event.png' alt='Data Collection Events' width='600'/>
