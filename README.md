@@ -47,6 +47,6 @@
 - [Progress Report](https://docs.google.com/presentation/d/1QpmcDUexZokhLhzRx4198VfW1-WgqPi4YffoX4_mxNY/edit?usp=sharing)
 
 ## Demo
+### [Final Project Report](./Report.md)
 ### Final Project Demo
 [![Final Project Demo](http://img.youtube.com/vi/kcvfzlNczBo/0.jpg)](http://www.youtube.com/watch?v=kcvfzlNczBo "Final Demo")
-### [Final Project Report](./Report.md)
