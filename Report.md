@@ -24,8 +24,7 @@ Outline
 - [References](#references)
 
 
-Abstract
-===
+## Abstract
 In this project, we have created an archaic treasure hunting game played with motion control. We integrated several sensors in STM32 board with our own motion detection algorithm, object class wrapper and multi-threading technique for realization.
 
 Motivation
