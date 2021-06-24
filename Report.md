@@ -41,6 +41,7 @@ We started from the idea of building a reality game in which players can trigger
 ### II. System Layering
 
 #### 1. Data Layer
+The data sensor class processes the accelerometer and gyroscope sensor values. The classification of motions in entirely carried out on this layer.
 
 #### 2. WiFi Layer
 We implement a wifi wrapper class over the data sensor, which will get motion type from the sensor on a certain interval, then send this information to the game server.
