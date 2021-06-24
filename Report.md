@@ -60,7 +60,8 @@ To avoid glitches in the raw data, we used a sliding window technique to acquire
 + `stm_x/stm_y/stm_z`: Standard deviation values every 10 ms.
 + `stm_diff`: Amplitude difference between milliseconds.
 + `stm_all`: Amplitude of each milliseconds.
-![Sliding Window](./images/data-buffer.png =250x)
+![Sliding Window](./images/data-buffer.png)
+<img src='./images/data-buffer.png' alt='Sliding Window' width='200'/>
 
 As for the gyroscope, we used Riemann sum in place of integration to convert the angular velocity to angles.
    ```
