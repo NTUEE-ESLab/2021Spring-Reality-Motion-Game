@@ -36,7 +36,16 @@ We started from the idea of building a reality game in which players can trigger
 ## Implementation
 
 ### I. System Architecture
+
+#### 1. Architecture Diagram
 ![Project Architecture](./images/architecture.png)
+
+#### 2. Component Interactions
+In the sensor, there are 4 logical threads:
+- Event Thread： handle the dispatching of events
+- Sensing Thread：sense raw physical data like acce, gyro, ...
+- Motion Thread: determine user’s motion based on sensor data
+- WiFi Thread：handle WiFi connection, send motion type to game server
 
 ### II. System Layering
 
@@ -98,7 +107,7 @@ After the user get information from the BLE tag, the game in the user's device w
 A more general approach is indeed to let BLE tags change its configuration. However, it requires a lot more complex coding to be done. Also, some serious issues may arise. For instance, to make a BLE tag capable of changing its settings dynamicly, the tag has to run another connection service on the background. Sadly, in our experiments, it is hard to do this kind of thing on STM32 board. This part is left for future research.
 
 ### V. Game Design
-We create two threads in the game. One thread is a worker thread, listening data come from the sensor. The other one is the main thread, which handles the game logic. By doing so, we prevent the blocking nature of wifi connection, resulting in the enhanced performance.
+We create two threads in the game. One thread is a worker thread, listening data coming from the sensor. The other one is the main thread, which handles the game logic. By doing so, we prevent the blocking nature of wifi connection, resulting in the enhanced performance of the game.
 
 ## Setup & Usage
 
