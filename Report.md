@@ -151,7 +151,7 @@ In the previous works, either motions that vary greatly on the frequencies (eg. 
 ## Progress
 - [Proposal](https://docs.google.com/presentation/d/1zUISQAgCSKkXEW6G_4c_JL1AxVgvxVhpq2gYIAT18C8/edit?usp=sharing)
 - [Progress Report](https://docs.google.com/presentation/d/1QpmcDUexZokhLhzRx4198VfW1-WgqPi4YffoX4_mxNY/edit?usp=sharing)
-- [Final Architecture](https://docs.google.com/presentation/d/1mzxD-mrKPGvVDJUUmNWVDwRqgBFVrgXSTXqixF7TbNA/edit?usp=sharing)
+- [Final Report](https://docs.google.com/presentation/d/1mzxD-mrKPGvVDJUUmNWVDwRqgBFVrgXSTXqixF7TbNA/edit?usp=sharing)
 
 ## Demo
 ### Final Project Demo
