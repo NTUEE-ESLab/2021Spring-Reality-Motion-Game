@@ -1,8 +1,8 @@
-**2021 Spring ESLab Final Project - Motion**
+**2021 Spring ESLab Final Project - Motion Detection Game**
 ===
 
 **Authors**:
-- 陳映樵 B07901
+- 陳映樵 B07901184
 - 吳宜庭 B07901095
 
 ## Outline
@@ -27,7 +27,7 @@
 
 
 ## Abstract
-In this project, we have created an archaic treasure hunting game played with motion control. We integrated several sensors in STM32 board with our own motion detection algorithm, object class wrapper and multi-threading technique.
+In this project, we have created an simple treasure hunting game played with motion control. We integrated several sensors in STM32 board with our own motion detection algorithm, object class wrapper and multi-threading techniques.
 
 ## Motivation
 We started from the idea of building a reality game in which players can trigger different tasks based on their locations and complete the tasks by performing specified movements. We thought controlling the game by motion rather than pressing buttons would add more fun to the user experience, and combining location service with motion service could serve for wider purposes in the future. We also aimed at refining the codes in previous works as well as adding the detection for more wide-ranged motions. In the end, we achieved code refinement and motion control. However, the location service was omitted due to some hardware issues.
@@ -41,13 +41,13 @@ We started from the idea of building a reality game in which players can trigger
 ### II. System Layering
 
 #### 1. Data Layer
-The data sensor class processes the accelerometer and gyroscope sensor values. The classification of motions in entirely carried out on this layer.
+The data sensor class processes the accelerometer and gyroscope sensor values. The classification of motions' type is entirely carried out on this layer rather than on the game server side. It also provides an interface `getSensorType()` for WiFi layer to call, the data type is of a simple `"type":$motion` format.
 
 #### 2. WiFi Layer
-We implement a wifi wrapper class over the data sensor, which will get motion type from the sensor on a certain interval, then send this information to the game server.
+We implement a wifi wrapper class over the data sensor, which request for motion type from the sensor on a certain interval, then send this information to the game server. Note that this layer can be replaced to any connection service, but in our case we use WiFi for convenience.
 
 #### 3. Game Layer
-We write out game program based on a spaceship shooting game from the web. The player have to move around the screen to find the treasure. If the player collides with asteroids, the player lose the game. If the player collect all treasures, it wins.
+We write our game program based on a spaceship shooting game from a web [tutorial](https://realpython.com/asteroids-game-python/). The player have to move around the space to find the treasures. If the player collides with asteroids, the player lose the game. If the player collect all treasures, the player wins. 
 
 
 ### III. Motion Detection
@@ -93,7 +93,7 @@ After acquiring the motion types with above algorithm, we found that there were 
 ### IV. Location Service
 
 ### V. Game Design
-
+We create two threads in the game. One thread is a worker thread, listening data come from the sensor. The other one is the main thread, which handles the game logic. By doing so, we prevent the blocking nature of wifi connection, resulting in the enhanced performance.
 
 ## Setup & Usage
 
