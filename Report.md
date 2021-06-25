@@ -91,6 +91,11 @@ After acquiring the motion types with above algorithm, we found that there were 
 <img src='./images/data-event.png' alt='Data Collection Events' width='600'/>
 
 ### IV. Location Service
+In our original design, we try to use BLE tags that scattered around an area to simulate location service. In this design, each BLE tag has its own id, hardness, and some other properties. The BLE tag keeps advertising its inforamtion, when a user connect to it, the user can access this properties. Each characteristic has different privileges, such as ReadOnly, ReadWriteOnly, NotifyOnly, and so on. These privileges are for security concerns. For example, the **id** of the tag should not be altered anyway, but the **previous challenger** may be modified after some challenge events. 
+
+After the user get information from the BLE tag, the game in the user's device will do actions based on the information it just received. This approach is not only easy to implement but also more flexible. The IoT boards usually have less computing power. When it comes to games, the operations in games are usually too heavy for the IoT board to carry out. Therefore it is reasonable to put all complex operations on the game server instead of the BLE tags. Another advantage is the immutability of the IoT board. When the developers want to change the some parts of the game, they do not have to change the configuration of the BLE tags, but only change the program of the game.
+
+A more general approach is indeed to let BLE tags change its configuration. However, it requires a lot more complex coding to be done. Also, some serious issues may arise. For instance, to make a BLE tag capable of changing its settings dynamicly, the tag has to run another connection service on the background. Sadly, in our experiments, it is hard to do this kind of thing on STM32 board. This part is left for future research.
 
 ### V. Game Design
 We create two threads in the game. One thread is a worker thread, listening data come from the sensor. The other one is the main thread, which handles the game logic. By doing so, we prevent the blocking nature of wifi connection, resulting in the enhanced performance.
@@ -142,6 +147,7 @@ In the previous works, either motions that vary greatly on the frequencies (eg. 
 ## Progress
 - [Proposal](https://docs.google.com/presentation/d/1zUISQAgCSKkXEW6G_4c_JL1AxVgvxVhpq2gYIAT18C8/edit?usp=sharing)
 - [Progress Report](https://docs.google.com/presentation/d/1QpmcDUexZokhLhzRx4198VfW1-WgqPi4YffoX4_mxNY/edit?usp=sharing)
+- [Final Architecture](https://docs.google.com/presentation/d/1mzxD-mrKPGvVDJUUmNWVDwRqgBFVrgXSTXqixF7TbNA/edit?usp=sharing)
 
 ## Demo
 ### Final Project Demo
